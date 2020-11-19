@@ -18,9 +18,9 @@ stages:
 variables:
     HEROKU_API_KEY: 41276ac9-c09f-44d0-a0aa-288758c5cf75
     HEROKU_STAGING_APP: gulshanclub-staging
-    HEROKU_PRODUCTION_APP: gulshanclub-staging
+    HEROKU_PRODUCTION_APP: gulshanclub
     POSTGRES_USER: postgres
-    REGISTRY_NAME: registry.gitlab.com/your gitlab project's name
+    REGISTRY_NAME: registry.gitlab.com/gulshan_club_api
     CONTAINER_IMAGE: REGISTRY_NAME:$CI_BUILD_REF_NAME
 
 
@@ -46,7 +46,7 @@ deploy_staging:
   script:
     - echo "Deploying the app"
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker login --workspaceinfotech@gmail.com=_ --wsit@2020=$HEROKU_API_KEY registry.heroku.com
     - docker pull $CONTAINER_IMAGE
     - docker tag $CONTAINER_IMAGE registry.heroku.com/$HEROKU_STAGING_APP/web
     - docker-compose run deploy_staging sh -c "python manage.py migrate"
