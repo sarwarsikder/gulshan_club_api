@@ -21,7 +21,7 @@ variables:
     HEROKU_PRODUCTION_APP: gulshanclub
     POSTGRES_USER: postgres
     REGISTRY_NAME: registry.gitlab.com/sarwar_sikder/gulshan_club_api
-    CONTAINER_IMAGE: REGISTRY_NAME:$CI_COMMIT_REF_NAME
+    CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF
 
 
 test:
