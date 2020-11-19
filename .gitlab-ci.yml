@@ -18,10 +18,10 @@ stages:
 variables:
     HEROKU_API_KEY: 41276ac9-c09f-44d0-a0aa-288758c5cf75
     HEROKU_STAGING_APP: gulshanclub-staging
-    HEROKU_PRODUCTION_APP: gulshanclub-staging
+    HEROKU_PRODUCTION_APP: gulshanclub
     POSTGRES_USER: postgres
-    REGISTRY_NAME: registry.gitlab.com/your gitlab project's name
-    CONTAINER_IMAGE: REGISTRY_NAME:$CI_BUILD_REF_NAME
+    REGISTRY_NAME: registry.gitlab.com/sarwar_sikder/gulshan_club_api
+    CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF
 
 
 test:
