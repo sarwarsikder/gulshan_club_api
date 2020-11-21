@@ -1,12 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import PermissionsMixin
+from django.utils.translation import gettext_lazy as _
+from .managers import CustomUserManager
+from django.utils import timezone
 
+from django.contrib.auth import get_user_model
 # Create your models here.
-
 
 class UserCategory(models.Model):
     category_name = models.CharField(max_length=200)
-    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -18,7 +21,12 @@ class UserCategory(models.Model):
     class Meta:
         ordering = ['category_name', 'description', 'created_at', 'deleted_at']
 
-class UserDetail(models.Model):
+
+
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(_('email address'), unique=True)
+
     material_types = (
         ("Married", "Married"),
         ("Unmarried", "Unmarried"),
@@ -29,16 +37,11 @@ class UserDetail(models.Model):
         ("Female", "Female"),
         ("Other", "Other"),
     )
-
-    first_name = models.CharField(max_length=200, null=True)
-    middle_name = models.CharField(max_length=200, null=True)
-    last_name = models.CharField(max_length=200, null=True)
-    email = models.CharField(max_length=200, null=True)
     phone_primary = models.CharField(max_length=200, null=True)
     phone_secondary = models.CharField(max_length=200, null=True)
     club_ac_number = models.CharField(max_length=200)
     club_ac_number = models.CharField(max_length=200)
-    category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING)
+    category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING,null=True)
     membership_date = models.DateField(null=True)
     birthday = models.DateField(null=True)
     material_status = models.CharField(choices=material_types, max_length=50, null=True)
@@ -56,16 +59,17 @@ class UserDetail(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    objects = CustomUserManager()
 
     def __str__(self):
-        return self.first_name +" "+ self.middle_name +" "+ self.last_name
-
-    class Meta:
-        ordering = ['email', 'phone_primary', 'category_name', 'nationality', 'created_at']
+        return self.username
 
 
-
+User = get_user_model()
 
 
 class MessageUser(models.Model):

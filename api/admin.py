@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import User, NoticeBoard, Event, MessageUser, UserCategory, UserDetail
+from .models import User, NoticeBoard, Event, MessageUser, UserCategory
 
 # Register your models here.
-
 
 @admin.register(NoticeBoard)
 class NoticeBoardAdmin(admin.ModelAdmin):
@@ -20,6 +19,3 @@ class MessageUserAdmin(admin.ModelAdmin):
 class UserCategoryAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(UserDetail)
-class UserDetailAdmin(admin.ModelAdmin):
-    pass
