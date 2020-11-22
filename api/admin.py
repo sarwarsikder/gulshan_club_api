@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import NoticeBoard, Event, MessageUser, UserCategory, CustomUser
+from .models import NoticeBoard, Event, MessageUser, UserCategory, CustomUser, StuffUser
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
 
-class CustomUserAdmin(UserAdmin,ImportExportModelAdmin):
+class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
@@ -26,6 +26,7 @@ class CustomUserAdmin(UserAdmin,ImportExportModelAdmin):
     ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(StuffUser, ImportExportModelAdmin)
 
 
 @admin.register(NoticeBoard)
@@ -43,4 +44,3 @@ class MessageUserAdmin(admin.ModelAdmin):
 @admin.register(UserCategory)
 class UserCategoryAdmin(admin.ModelAdmin):
     pass
-

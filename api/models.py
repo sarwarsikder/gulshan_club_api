@@ -3,14 +3,13 @@ from django.contrib.auth.models import User, AbstractBaseUser, AbstractUser
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
-from django.utils import timezone
 
 from django.contrib.auth import get_user_model
 # Create your models here.
 
 class UserCategory(models.Model):
     category_name = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -71,6 +70,21 @@ class CustomUser(AbstractUser):
 
 User = get_user_model()
 
+
+class StuffUser(models.Model):
+      stuff_name = models.CharField(max_length= 200)
+      image = models.ImageField(blank=True, null=True)
+      designation_group = models.CharField(max_length= 300)
+      designation = models.CharField(max_length= 300)
+      mobile_number_primary = models.CharField(max_length= 300)
+      mobile_number_secondary = models.CharField(max_length= 300, null=True, blank=True)
+      created_at = models.DateTimeField(null=True, blank=True)
+
+      def __str__(self):
+          return self.stuff_name
+
+      class Meta:
+          ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary']
 
 class MessageUser(models.Model):
     subject = models.TextField(max_length=2000)
