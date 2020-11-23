@@ -138,3 +138,28 @@ class Event(models.Model):
     
     class Meta:
         ordering = ['start_date', 'end_date', 'name', 'slug', 'created']
+
+
+class ClubFacility(models.Model):
+    name = models.CharField(max_length=250)
+    description = models.TextField()
+    image = models.ImageField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True, editable=True)
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['name', 'description', 'image']
+class ClubFacilityDetail(models.Model):
+    name = models.CharField(max_length=250)
+    club_facility = models.ForeignKey(ClubFacility, on_delete=models.DO_NOTHING)
+    description = models.TextField()
+    image = models.ImageField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True, editable=True)
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['name', 'description', 'image']

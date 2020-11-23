@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import NoticeBoard, Event, MessageUser, UserCategory, CustomUser, StuffUser
+from .models import NoticeBoard, Event, MessageUser, UserCategory, CustomUser, StuffUser, ClubFacility, ClubFacilityDetail
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from import_export.admin import ImportExportModelAdmin
 
@@ -43,4 +43,13 @@ class MessageUserAdmin(admin.ModelAdmin):
 
 @admin.register(UserCategory)
 class UserCategoryAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(ClubFacility)
+class ClubFacilityAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ClubFacilityDetail)
+class ClubFacilityDetailAdmin(admin.ModelAdmin):
     pass
