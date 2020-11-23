@@ -10,7 +10,7 @@ from api.views.club_facility_detail_views import  ClubFacilityDeailsList, ClubFa
 
 
 router = routers.DefaultRouter()
-router.register(r'get_by_username', UserByUsernameList)
+router.register(r'opt_operation', UserByUsernameList)
 
 
 urlpatterns = [

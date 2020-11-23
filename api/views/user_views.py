@@ -9,11 +9,13 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, Token
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes, authentication_classes
 from django.http import HttpResponse, JsonResponse
 import json
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
-
+from http import HTTPStatus
+import requests
+import urllib
 
 class UserList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
@@ -21,23 +23,79 @@ class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
 class UserByUsernameList(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    #permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
+    @action(detail=False, methods=['get'], url_path='(?P<phone>[\w-]+)/get_opt')
+    @permission_classes(([permissions.IsAuthenticated]), )
+    def get_opt_by_phone_number(self, request, phone):
+        try:
+            if request.user:
+                return JsonResponse(
+                    {'status': True, 'data': request.user.phone_primary}, status=HTTPStatus.ACCEPTED)
+            else:
+                message = "Please submit valid User."
+                return JsonResponse(
+                    {'status': True, 'data': message}, status=HTTPStatus.BAD_REQUEST)
 
+        except Exception as e:
+            message = "Please submit valid User."
+            print(str(e) + "Exception")
+            return JsonResponse(
+                {'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
-    @action(detail=False, methods=['get'],url_path='phone/(?P<username>[\w-]+)')
-    def get_phone_username(self,request,username):
-          return JsonResponse({'status': True, 'data': UserSerializer(User.objects.filter(username=username)[0]).data})
+    @action(detail=False, methods=['get'],url_path='(?P<username>[\w-]+)/phone')
+    def get_phone_by_username(self,request,username):
+        try:
+            query_set = User.objects.filter(username=username)
+            if query_set.exists()>0:
+                response = {'status': False, 'message': ''}
+                user_data = UserSerializer(query_set[0]).data
+                # url = 'http://sms.sslwireless.com/pushapi/dynamic/server.php'
+                # print(url)
+                # headers = {
+                #     'Content-Type': 'application/json',
+                # }
+                #
+                # PARAMS = {
+                #     'user':'GhulshanClub',
+                #     'pass':'62?3b04y',
+                #     'sid':'GCLeng',
+                #     'msisdn':'+8801713523713',
+                #     'sms':'TestSMS1 Test sms2 Test sms API3',
+                #     'csmsid':'123456789',
+                # }
+                #
+                # print(PARAMS)
+                # print("dsdsd")
+                #
+                # try:
+                #     print(url)
+                #     res = requests.get(url=url,params=PARAMS)
+                #     print("TEST!")
+                #     print(type(res))
+                #     print( "dd")
+                #     data = res[0].json()
+                #     print(data+"TEST")
+                #     response['status'] = True
+                #     response['data'] = data
+                # except Exception as e:
+                #     print('ex' + str(e))
+                #     response['status'] = False
 
+                return JsonResponse(
+                    {'status': True, 'data': user_data['phone_primary'],'sms':response},status=HTTPStatus.ACCEPTED)
+            else:
+                message = "Please submit valid User."
+                return JsonResponse(
+                    {'status': True, 'data': message},status=HTTPStatus.BAD_REQUEST)
 
-        # print(self.kwargs['username'])
-        # obj = get_object_or_404(User, username=self.kwargs['username'])
-        # return obj
-        # username = self.kwargs['username']
-        # return User.objects.filter(username=username)
-
+        except Exception as e:
+            message = "Some thing went wrong."
+            print(str(e))
+            return JsonResponse(
+                {'status': True, 'data':message},status=HTTPStatus.EXPECTATION_FAILED)
         
 class UserDetails(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
