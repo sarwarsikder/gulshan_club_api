@@ -48,8 +48,6 @@ class UserCategoryAdmin(admin.ModelAdmin):
 @admin.register(ClubFacility)
 class ClubFacilityAdmin(admin.ModelAdmin):
     pass
-
-
 @admin.register(ClubFacilityDetail)
 class ClubFacilityDetailAdmin(admin.ModelAdmin):
     pass

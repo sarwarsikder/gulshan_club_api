@@ -1,8 +1,6 @@
 from django.urls import path
 from rest_framework import routers
 
-
-
 from api.views.user_views import UserList, UserDetails, GroupList, UserByUsernameList
 from api.views.event_views import EventList, EventDetails
 from api.views.notice_board_views import NoticeBoardList, NoticeBoardDetails
@@ -13,8 +11,6 @@ from api.views.club_facility_detail_views import  ClubFacilityDeailsList, ClubFa
 
 router = routers.DefaultRouter()
 router.register(r'get_by_username', UserByUsernameList)
-
-
 
 
 urlpatterns = [

@@ -12,21 +12,13 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 import json
+from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
 
-
-
-
-
-
-
-
-
-class UserList(generics.ListAPIView):
+class UserList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
 
 class UserByUsernameList(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
@@ -47,7 +39,6 @@ class UserByUsernameList(viewsets.ModelViewSet):
         # return User.objects.filter(username=username)
 
         
-    
 class UserDetails(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     queryset = User.objects.all()

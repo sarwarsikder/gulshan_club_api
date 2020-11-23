@@ -132,13 +132,10 @@ class Event(models.Model):
     image_alt_text = models.CharField(max_length=250, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=True)
-
     def __str__(self):
         return self.name
-    
     class Meta:
         ordering = ['start_date', 'end_date', 'name', 'slug', 'created']
-
 
 class ClubFacility(models.Model):
     name = models.CharField(max_length=250)

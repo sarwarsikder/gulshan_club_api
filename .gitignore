@@ -1,6 +1,10 @@
 /env_ghulshan
 .history
 .vscode
+<<<<<<< HEAD
 .idea
 api/__pycache__/
 api/migrations/__pycache__/
+=======
+.idea
+>>>>>>> e55edb7cef81a20ac746175cfd74c85f75a4d231
