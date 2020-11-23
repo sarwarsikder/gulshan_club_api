@@ -54,7 +54,7 @@ class CustomUser(AbstractUser):
     religion = models.CharField(max_length=25, null=True)
     gender = models.CharField(choices=gender_types, max_length=50, null=True)
     profession = models.CharField(max_length=200, null=True)
-    Education = models.TextField(null=True)
+    education = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True)

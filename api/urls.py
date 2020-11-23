@@ -1,10 +1,20 @@
 from django.urls import path
-from api.views.user_views import UserList, UserDetails,GroupList
+from rest_framework import routers
+
+
+
+from api.views.user_views import UserList, UserDetails, GroupList, UserByUsernameList
 from api.views.event_views import EventList, EventDetails
 from api.views.notice_board_views import NoticeBoardList, NoticeBoardDetails
 from api.views.user_stuff_views import UserStuffList, UserStuffDetails
 from api.views.club_facility_views import ClubFacilityList, ClubFacilityDetails
 from api.views.club_facility_detail_views import  ClubFacilityDeailsList, ClubFacilityDetailDetails
+
+
+router = routers.DefaultRouter()
+router.register(r'get_by_username', UserByUsernameList)
+
+
 
 
 urlpatterns = [
@@ -22,3 +32,6 @@ urlpatterns = [
     path('club_facility_detail_details/', ClubFacilityDeailsList.as_view()),
     path('club_facility_detail_details/<pk>/club_facility_detail_detail/', ClubFacilityDetailDetails.as_view())
 ]
+
+
+urlpatterns += router.urls
