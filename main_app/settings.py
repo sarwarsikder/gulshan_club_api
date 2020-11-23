@@ -26,6 +26,7 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'api.CustomUser'
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
