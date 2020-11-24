@@ -16,7 +16,7 @@ stages:
   - deploy
 
 variables:
-    HEROKU_API_KEY: 41276ac9-c09f-44d0-a0aa-288758c5cf75
+    HEROKU_API_KEY: fffeedc8-716f-44e2-ad2e-d4d6ca09a3e6
     HEROKU_STAGING_APP: gulshanclub-staging
     HEROKU_PRODUCTION_APP: gulshanclub
     POSTGRES_USER: postgres
