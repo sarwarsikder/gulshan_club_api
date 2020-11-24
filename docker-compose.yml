@@ -11,7 +11,7 @@ services:
       - local-var.env
     volumes:
       - .:/app
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn --bind 0.0.0.0:$PORT hello:app
     depends_on:
       - db
   db:
