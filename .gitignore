@@ -7,3 +7,4 @@ api/migrations/__pycache__/
 main_app/__pycache__/
 api/views/__pycache__/
 .idea
+db.sqlite3
