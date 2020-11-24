@@ -85,7 +85,7 @@ class StuffUser(models.Model):
           return self.stuff_name
 
       class Meta:
-          ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary']
+          ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary','image']
 
 class MessageUser(models.Model):
     subject = models.TextField(max_length=2000)
