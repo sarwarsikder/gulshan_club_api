@@ -20,7 +20,6 @@ RUN apk update && apk add \
     harfbuzz-dev \
     fribidi-dev \
     py3-magic \
-    python-brlapi \
   && rm -rf /var/cache/apk/*
 
 RUN python -m pip install --upgrade pip
