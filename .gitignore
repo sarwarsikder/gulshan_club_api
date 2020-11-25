@@ -9,3 +9,4 @@ api/views/__pycache__/
 gulsan_club.session.sql
 media
 env_ghulshan
+db.sqlite3
