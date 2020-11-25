@@ -11,11 +11,12 @@ from api.views.club_facility_detail_views import  ClubFacilityDeailsList, ClubFa
 
 router = routers.DefaultRouter()
 router.register(r'opt_operation', UserByUsernameList)
+router.register(r'users', UserList)
 
 
 urlpatterns = [
-    path('users/', UserList.as_view()),
-    path('users/<pk>/user/', UserDetails.as_view()),
+    #path('users/', UserList,name='users'),
+    #path('users/<pk>/user/', UserDetails.as_view()),
     path('groups/', GroupList.as_view()),
     path('events/', EventList.as_view()),
     path('events/<pk>/event/', EventDetails.as_view()),

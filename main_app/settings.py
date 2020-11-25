@@ -135,6 +135,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5
 }
 
+
+SMS_CONFIG = {
+	"username" : 'GhulshanClub', # Please add your own username
+	"password" : '62?3b04y', # Please add your own password
+	"sid" : 'GCLeng', # Please add your own SID
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
