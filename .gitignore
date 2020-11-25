@@ -11,7 +11,5 @@ api/views/__pycache__/
 .idea
 gulsan_club.session.sql
 media
-
 #Database 
-
 db.sqlite3
