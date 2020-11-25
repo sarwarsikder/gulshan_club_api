@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         "category_name",
         "membership_date",
         "birthday",
-        "material_status",
+        "marital_status",
         "marriage_anniversary",
         "spouse",
         "address",

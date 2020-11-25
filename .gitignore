@@ -1,6 +1,4 @@
 #Virtual environment
-env_ghulshan/
-env_ghulshan
 .history
 .vscode
 .idea
@@ -8,5 +6,6 @@ __pycache__
 .idea
 gulsan_club.session.sql
 media
+env_ghulshan
 #Database 
 db.sqlite3
