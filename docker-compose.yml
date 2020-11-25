@@ -11,7 +11,7 @@ services:
       - local-var.env
     volumes:
       - .:/app
-    command: gunicorn --bind 0.0.0.0:$PORT hello:app
+    command: gunicorn gulshan_club.wsgi:application --bind 0.0.0.0:$PORT
     depends_on:
       - db
   db:
