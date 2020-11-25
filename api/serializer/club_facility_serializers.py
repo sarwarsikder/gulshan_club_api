@@ -8,5 +8,5 @@ class ClubFacilitySerializer(serializers.ModelSerializer):
         fields = ('id',
                   'name',
                   'description',
-                  "image")
+                   "image_medium","image_thumbnail")
 

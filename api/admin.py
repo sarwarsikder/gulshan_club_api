@@ -13,13 +13,13 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
     list_display = ('email', 'is_staff', 'is_active',)
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
-        (None, {'fields': ('email', 'password','phone_primary')}),
+        (None, {'fields': ('email',"image_medium","image_thumbnail",'password','phone_primary')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_active','phone_primary')}
+            'fields': ('email', 'username', "image_medium","image_thumbnail", 'password1', 'password2', 'is_staff', 'is_active','phone_primary')}
         ),
     )
     search_fields = ('email',)

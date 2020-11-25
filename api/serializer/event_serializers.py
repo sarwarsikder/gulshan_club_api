@@ -12,7 +12,8 @@ class EventSerializer(serializers.ModelSerializer):
                   "end_date",
                   "url",
                   "description",
-                  "image",
+                  "image_medium",
+                  "image_thumbnail",
                   "image_alt_text",
                   "created")
 

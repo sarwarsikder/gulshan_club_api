@@ -9,5 +9,5 @@ class ClubFacilityDetailSerializer(serializers.ModelSerializer):
                   'name',
                   'club_facility',
                   'description',
-                  "image")
+                   "image_medium','image_thumbnail")
 

@@ -1,5 +1,5 @@
+env_ghulshan/
 env_ghulshan
-/env_ghulshan
 .history
 .vscode
 .idea
@@ -9,3 +9,4 @@ main_app/__pycache__/
 api/views/__pycache__/
 .idea
 gulsan_club.session.sql
+media
