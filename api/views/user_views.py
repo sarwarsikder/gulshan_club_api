@@ -52,6 +52,9 @@ class UserByUsernameList(viewsets.ModelViewSet):
             if query_set.exists()>0:
                 response = {'status': False, 'message': ''}
                 user_data = UserSerializer(query_set[0]).data
+                print("TEST DATA")
+                print(user_data['image'].large)
+                print("TEST DATA One")
                 # url = 'http://sms.sslwireless.com/pushapi/dynamic/server.php'
                 # print(url)
                 # headers = {

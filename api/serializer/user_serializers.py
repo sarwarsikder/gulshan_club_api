@@ -6,7 +6,32 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id','username', 'email', "first_name", "last_name", "phone_primary")
+        fields = ('id',
+        'username', 
+        'email', 
+        'image_medium',
+        'image_thumbnail',
+        "first_name", 
+        "last_name", 
+        "phone_primary",
+        "phone_secondary",
+        "club_ac_number",
+        "category_name",
+        "membership_date",
+        "birthday",
+        "material_status",
+        "marriage_anniversary",
+        "spouse",
+        "address",
+        "nationality",
+        "blood_group",
+        "religion",
+        "gender",
+        "profession",
+        "education",
+        "opt"
+        )
+
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:

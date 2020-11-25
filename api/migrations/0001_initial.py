@@ -1,4 +1,3 @@
-
 from django.conf import settings
 import django.contrib.auth.validators
 from django.db import migrations, models
@@ -12,6 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('auth', '0011_update_proxy_permissions'),
+        
     ]
 
     operations = [

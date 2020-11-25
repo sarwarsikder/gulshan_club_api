@@ -1,12 +1,11 @@
+#Virtual environment
 .history
 .vscode
 .idea
-api/__pycache__/
-api/migrations/__pycache__/
-main_app/__pycache__/
-api/views/__pycache__/
+__pycache__
 .idea
 gulsan_club.session.sql
 media
 env_ghulshan
+#Database 
 db.sqlite3

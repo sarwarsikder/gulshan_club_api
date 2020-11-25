@@ -1,4 +1,5 @@
 from django.db import models
+from stdimage import StdImageField
 from django.contrib.auth.models import User, AbstractBaseUser, AbstractUser
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import gettext_lazy as _
@@ -6,6 +7,28 @@ from .managers import CustomUserManager
 
 from django.contrib.auth import get_user_model
 # Create your models here.
+
+
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+
+
+def image_variations():
+    return {
+        'large': (600, 400),
+        'thumbnail': (100, 100, True),
+        'medium': (300, 200)
+    }
+
+def image_storage(fil_path):
+    location=u'{0}/'.format(fil_path)
+    return location
+
+
+
+def image_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
+    return u'picture/{0}'.format(filename)
 
 class UserCategory(models.Model):
     category_name = models.CharField(max_length=200)
@@ -36,9 +59,14 @@ class CustomUser(AbstractUser):
         ("Female", "Female"),
         ("Other", "Other"),
     )
+    image_medium = StdImageField(upload_to= image_storage('member_user/medium'), variations={
+            'medium': (300, 200)
+        },blank=True, null=True)
+    image_thumbnail =StdImageField(upload_to= image_storage('member_user/thumbnail'), variations={
+           'thumbnail': (100, 100, True),
+        },blank=True, null=True)
     phone_primary = models.CharField(max_length=200, null=True)
     phone_secondary = models.CharField(max_length=200, null=True)
-    club_ac_number = models.CharField(max_length=200)
     club_ac_number = models.CharField(max_length=200)
     category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING,null=True)
     membership_date = models.DateField(null=True)
@@ -74,7 +102,12 @@ User = get_user_model()
 
 class StuffUser(models.Model):
       stuff_name = models.CharField(max_length= 200)
-      image = models.ImageField(blank=True, null=True)
+      image_medium = StdImageField(upload_to= image_storage('stuff_user/medium'), variations={
+            'medium': (300, 200)
+        },blank=True, null=True)
+      image_thumbnail =StdImageField(upload_to= image_storage('stuff_user/thumbnail'), variations={
+           'thumbnail': (100, 100, True),
+        },blank=True, null=True)
       designation_group = models.CharField(max_length= 300)
       designation = models.CharField(max_length= 300)
       mobile_number_primary = models.CharField(max_length= 300)
@@ -85,7 +118,7 @@ class StuffUser(models.Model):
           return self.stuff_name
 
       class Meta:
-          ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary','image']
+          ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary']
 
 class MessageUser(models.Model):
     subject = models.TextField(max_length=2000)
@@ -129,7 +162,12 @@ class Event(models.Model):
     end_date = models.DateField(null=True)
     url = models.URLField(blank=True)
     description = models.TextField()
-    image = models.ImageField(blank=True, null=True)
+    image_medium = StdImageField(upload_to= image_storage('event/medium'), variations={
+            'medium': (300, 200)
+        },blank=True, null=True)
+    image_thumbnail =StdImageField(upload_to= image_storage('event/thumbnail'), variations={
+           'thumbnail': (100, 100, True),
+        },blank=True, null=True)
     image_alt_text = models.CharField(max_length=250, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=True)
@@ -141,23 +179,33 @@ class Event(models.Model):
 class ClubFacility(models.Model):
     name = models.CharField(max_length=250)
     description = models.TextField()
-    image = models.ImageField(blank=True, null=True)
+    image_medium = StdImageField(upload_to= image_storage('club_facility/medium'), variations={
+            'medium': (300, 200)
+        },blank=True, null=True)
+    image_thumbnail =StdImageField(upload_to= image_storage('club_facility/thumbnail'), variations={
+           'thumbnail': (100, 100, True),
+        },blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)
     def __str__(self):
         return self.name
     
     class Meta:
-        ordering = ['name', 'description', 'image']
+        ordering = ['name', 'description']
 class ClubFacilityDetail(models.Model):
     name = models.CharField(max_length=250)
     club_facility = models.ForeignKey(ClubFacility, on_delete=models.DO_NOTHING)
     description = models.TextField()
-    image = models.ImageField(blank=True, null=True)
+    image_medium = StdImageField(upload_to= image_storage('club_facility_detail/medium'), variations={
+            'medium': (300, 200)
+        },blank=True, null=True)
+    image_thumbnail =StdImageField(upload_to= image_storage('club_facility_detail/thumbnail'), variations={
+           'thumbnail': (100, 100, True),
+        },blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)
     def __str__(self):
         return self.name
     
     class Meta:
-        ordering = ['name', 'description', 'image']
+        ordering = ['name', 'description', 'image_medium','image_thumbnail']

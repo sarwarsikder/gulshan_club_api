@@ -29,5 +29,4 @@ urlpatterns = [
     path('club_facility_detail_details/<pk>/club_facility_detail_detail/', ClubFacilityDetailDetails.as_view())
 ]
 
-
 urlpatterns += router.urls

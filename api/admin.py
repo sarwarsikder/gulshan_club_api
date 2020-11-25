@@ -13,13 +13,64 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
     list_display = ('email', 'is_staff', 'is_active',)
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
-        (None, {'fields': ('email', 'password','phone_primary')}),
+        (None, {'fields': (
+            'email',
+            "image_medium",
+            "image_thumbnail",
+            'password',
+            'phone_primary',
+            'phone_secondary',
+                 'club_ac_number',
+                 'category_name',
+                 'membership_date',
+                 'birthday',
+                 'material_status',
+                 'marriage_anniversary',
+                 'spouse',
+                 'father_name',
+                 'mother_name',
+                 'address',
+                 'nationality',
+                 'blood_group',
+                 'religion',
+                 'gender',
+                 'profession',
+                 'education'
+            )}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_active','phone_primary')}
+            'fields': (
+                'email', 
+                'username',
+                 "image_medium",
+                 "image_thumbnail", 
+                 'password1', 
+                 'password2', 
+                 'is_staff', 
+                 'is_active',
+                 'phone_primary',
+                 'phone_secondary',
+                 'club_ac_number',
+                 'category_name',
+                 'membership_date',
+                 'birthday',
+                 'material_status',
+                 'marriage_anniversary',
+                 'spouse',
+                 'father_name',
+                 'mother_name',
+                 'address',
+                 'nationality',
+                 'blood_group',
+                 'religion',
+                 'gender',
+                 'profession',
+                 'education'
+                 )
+            }
         ),
     )
     search_fields = ('email',)
