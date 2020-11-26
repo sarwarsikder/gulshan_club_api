@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='customuser',
-            name='material_status',
+            name='marital_status',
             field=models.CharField(blank=True, choices=[('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorce', 'Divorce')], max_length=50, null=True),
         ),
         migrations.AlterField(
