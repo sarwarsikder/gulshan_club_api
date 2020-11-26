@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         "phone_secondary",
         "club_ac_number",
         "category_name",
-        "designation"
+        "designation",
         "membership_date",
         "birthday",
         "marital_status",
