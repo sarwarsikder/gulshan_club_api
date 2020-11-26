@@ -21,7 +21,7 @@ from api.service.sms_service import  SmsWireless
 
 class UserList(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
-    queryset = User.objects.all()
+    queryset = User.objects.all().filter()
     serializer_class = UserSerializer
 
 
