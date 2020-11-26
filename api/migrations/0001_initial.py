@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('club_ac_number', models.CharField(max_length=200)),
                 ('membership_date', models.DateField(null=True)),
                 ('birthday', models.DateField(null=True)),
-                ('material_status', models.CharField(choices=[('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorce', 'Divorce')], max_length=50, null=True)),
+                ('marital_status', models.CharField(choices=[('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorce', 'Divorce')], max_length=50, null=True)),
                 ('marriage_anniversary', models.DateField(null=True)),
                 ('spouse', models.CharField(max_length=200, null=True)),
                 ('father_name', models.CharField(max_length=200, null=True)),

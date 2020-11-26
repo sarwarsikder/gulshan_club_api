@@ -69,6 +69,7 @@ class CustomUser(AbstractUser):
     phone_secondary = models.CharField(max_length=200, null=True, blank=True)
     club_ac_number = models.CharField(max_length=200, blank=True)
     category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING,null=True, blank=True)
+    designation = models.CharField(max_length=250, null=True, blank=True)
     membership_date = models.DateField(null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     marital_status = models.CharField(choices=material_types, max_length=50, null=True, blank=True)
