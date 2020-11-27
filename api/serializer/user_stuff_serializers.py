@@ -6,4 +6,4 @@ from  ..models import StuffUser
 class UserStuffSerializer(serializers.ModelSerializer):
     class Meta:
         model = StuffUser
-        fields = ('id',"mobile_number_primary","image_medium","image_thumbnail")
+        fields = ('id','stuff_name', 'designation_group', "designation", "mobile_number_primary","image_medium","image_thumbnail")
