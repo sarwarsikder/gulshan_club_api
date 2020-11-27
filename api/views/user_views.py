@@ -24,6 +24,24 @@ class UserList(viewsets.ModelViewSet):
     queryset = User.objects.all().filter()
     serializer_class = UserSerializer
 
+    @action(detail=False, methods=['get'], url_path='basic_info')
+    def user_basic_info(self, request, ):
+        try:
+            print(request.user)
+            if request.user.is_authenticated:
+                user = request.user
+                user_data= UserSerializer(user).data
+                return JsonResponse(
+                    {'status': True, 'data': user_data}, status=HTTPStatus.ACCEPTED)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Please submit valid User."
+            print(str(e) + "Exception")
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+
 
     @action(detail=False, methods=['get'], url_path='(?P<phone>[\w-]+)/get_opt', permission_classes=[])
     def get_opt_by_phone_number(self, request, phone):
