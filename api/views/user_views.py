@@ -36,18 +36,14 @@ class UserList(viewsets.ModelViewSet):
     def user_search(self, request):
         try:
             if request.user.is_authenticated:
-                # user_list = User.objects.all()
-                # print(user_list)
-                # print("TEST")
-                # user_filter = UserFilter(search_keywords, queryset=user_list)
-                # # print("TEst")
-                # user_data = UserSerializer(instance=user_filter, many=True)
-                # print(user_data.data)
-                #user_data = UserSerializer(User.objects.filter(first_name=search_keywords), many=True).data
-                user_data = UserSerializer(User.objects.filter(first_name__contains=request.GET.get('member_name')), many=True).data
+                user_list = User.objects.all()
+                user_filter = UserFilter(request.GET.get('member_name'), queryset= user_list)
+                print(user_filter)
+                #user_data = UserSerializer(instance=user_filter, many=True).data
+                user_data = UserSerializer(user_filter, many=True).data
                 print(user_data)
                 return JsonResponse(
-                    {'status': True, 'data': user_data}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': user_data.data}, status=HTTPStatus.ACCEPTED)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
