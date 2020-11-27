@@ -17,12 +17,45 @@ from http import HTTPStatus
 import requests
 import urllib
 from api.service.sms_service import  SmsWireless
+from api.filter.filters import UserFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, pagination, filters
 
 
 class UserList(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     queryset = User.objects.all().filter()
     serializer_class = UserSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
+    filterset_fields = ["first_name","last_name"]
+
+
+
+    
+    @action(detail=False, methods=['get'], url_path='user_search')
+    def user_search(self, request):
+        try:
+            if request.user.is_authenticated:
+                # user_list = User.objects.all()
+                # print(user_list)
+                # print("TEST")
+                # user_filter = UserFilter(search_keywords, queryset=user_list)
+                # # print("TEst")
+                # user_data = UserSerializer(instance=user_filter, many=True)
+                # print(user_data.data)
+                #user_data = UserSerializer(User.objects.filter(first_name=search_keywords), many=True).data
+                user_data = UserSerializer(User.objects.filter(first_name__contains=request.GET.get('member_name')), many=True).data
+                print(user_data)
+                return JsonResponse(
+                    {'status': True, 'data': user_data}, status=HTTPStatus.ACCEPTED)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Please submit valid User."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
 
     @action(detail=False, methods=['get'], url_path='basic_info')
     def user_basic_info(self, request, ):
