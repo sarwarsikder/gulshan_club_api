@@ -20,7 +20,6 @@ oauthlib==3.1.0
 odfpy==1.4.1
 openpyxl==3.0.5
 Pillow==6.2.2
-#pkg-resources==0.0.0
 progressbar2==3.53.1
 psycopg2-binary==2.8.6
 python-utils==2.4.0
