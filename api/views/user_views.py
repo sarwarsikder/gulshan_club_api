@@ -20,6 +20,7 @@ from api.service.sms_service import  SmsWireless
 from api.filter.filters import UserFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, pagination, filters
+import random
 
 
 class UserList(viewsets.ModelViewSet):
@@ -36,18 +37,14 @@ class UserList(viewsets.ModelViewSet):
     def user_search(self, request):
         try:
             if request.user.is_authenticated:
-                # user_list = User.objects.all()
-                # print(user_list)
-                # print("TEST")
-                # user_filter = UserFilter(search_keywords, queryset=user_list)
-                # # print("TEst")
-                # user_data = UserSerializer(instance=user_filter, many=True)
-                # print(user_data.data)
-                #user_data = UserSerializer(User.objects.filter(first_name=search_keywords), many=True).data
-                user_data = UserSerializer(User.objects.filter(first_name__contains=request.GET.get('member_name')), many=True).data
+                user_list = User.objects.all()
+                user_filter = UserFilter(request.GET.get('member_name'), queryset= user_list)
+                print(user_filter)
+                #user_data = UserSerializer(instance=user_filter, many=True).data
+                user_data = UserSerializer(user_filter, many=True).data
                 print(user_data)
                 return JsonResponse(
-                    {'status': True, 'data': user_data}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': user_data.data}, status=HTTPStatus.ACCEPTED)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
@@ -79,14 +76,19 @@ class UserList(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='(?P<phone>[\w-]+)/get_opt', permission_classes=[])
     def get_opt_by_phone_number(self, request, phone):
         try:
-            smsWireless = SmsWireless('01713523713', 'Test SMS With GET')
+            opt = random.randint(1000, 9999)
+            opt_message = "Verification code is {0}".format(opt)
+            smsWireless = SmsWireless(phone, opt_message)
             response = smsWireless.sendSMSWithGet()
             
             sms_obj = xmltodict.parse(response)
 
             if request.user:
+                request.user.opt = opt
+                request.user.save()
+
                 return JsonResponse(
-                    {'status': True, 'data': request.user.phone_primary,'sms_response':sms_obj}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': request.user.phone_primary,'sms_response':sms_obj,'opt': str(opt)}, status=HTTPStatus.ACCEPTED)
             else:
                 message = "Please submit valid User."
                 return JsonResponse(
