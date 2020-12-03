@@ -109,7 +109,7 @@ class UserList(viewsets.ModelViewSet):
                     user_data = UserSerializer(query_set[0]).data
                     return JsonResponse(
                         {'status': True, 'data': "Successfully verified"},
-                        status=HTTPStatus.ACCEPTED)
+                        status=HTTPStatus.OK)
                 else:
                     message = "Please submit valid Verification CODE."
                     return JsonResponse(
