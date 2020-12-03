@@ -11,6 +11,10 @@ from django.contrib.auth import get_user_model
 
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.utils import timezone
+from django.db.models import Q
+
+
 
 
 def image_variations():
@@ -85,6 +89,7 @@ class CustomUser(AbstractUser):
     profession = models.CharField(max_length=200, null=True, blank=True)
     education = models.TextField(null=True, blank=True)
     opt = models.CharField(max_length=10, null=True, blank=True)
+    opt_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -121,22 +126,86 @@ class StuffUser(models.Model):
       class Meta:
           ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary']
 
+
+class MessageManager(models.Manager):
+
+    def inbox_for(self, user):
+        """
+        Returns all messages that were received by the given user and are not
+        marked as deleted.
+        """
+        return self.filter(
+            Q(recipient=user) | Q(sender=user),
+            recipient_deleted_at__isnull=True,
+            parent_msg=0
+        )
+
+    def inbox_for_single_user(self, user,parent_id):
+        """
+        Returns all messages that were received by the given user and are not
+        marked as deleted.
+        """
+        return self.filter(
+            recipient_deleted_at__isnull=True,
+            parent_msg=parent_id
+        )
+
+    def outbox_for(self, user):
+        """
+        Returns all messages that were sent by the given user and are not
+        marked as deleted.
+        """
+        return self.filter(
+            sender=user,
+            sender_deleted_at__isnull=True,
+        )
+
+    def trash_for(self, user):
+        """
+        Returns all messages that were either received or sent by the given
+        user and are marked as deleted.
+        """
+        return self.filter(
+            recipient=user,
+            recipient_deleted_at__isnull=False,
+        ) | self.filter(
+            sender=user,
+            sender_deleted_at__isnull=False,
+        )
+
+
 class MessageUser(models.Model):
     subject = models.TextField(max_length=2000)
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.PROTECT)
-    recipient = models.ForeignKey(User, related_name='received_messages', null=True, blank=True, on_delete=models.SET_NULL)
+    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, related_name='received_messages', null=True, blank=True, on_delete=models.CASCADE)
     parent_msg = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
-    created_at = models.DateTimeField(null=True, blank=True)
+    sent_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     read_at = models.DateTimeField(null=True, blank=True)
     replied_at = models.DateTimeField(null=True, blank=True)
     sender_deleted_at = models.DateTimeField(null=True, blank=True)
     recipient_deleted_at = models.DateTimeField(null=True, blank=True)
 
+    objects = MessageManager()
+
+    def new(self):
+        """returns whether the recipient has read the message or not"""
+        if self.read_at is not None:
+            return False
+        return True
+
+    def replied(self):
+        """returns whether the recipient has written a reply to this message"""
+        if self.replied_at is not None:
+            return True
+        return False
+
     def __str__(self):
         return self.subject
-    
+
     class Meta:
-        ordering = ['subject', 'sender', 'recipient', 'created_at']
+        ordering = ['-sent_at']
+        verbose_name = _("Message")
+        verbose_name_plural = _("Messages")
 
 
 

@@ -76,19 +76,44 @@ class UserList(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='(?P<phone>[\w-]+)/get_opt', permission_classes=[])
     def get_opt_by_phone_number(self, request, phone):
         try:
-            opt = random.randint(1000, 9999)
-            opt_message = "Verification code is {0}".format(opt)
-            smsWireless = SmsWireless(phone, opt_message)
-            response = smsWireless.sendSMSWithGet()
-            
-            sms_obj = xmltodict.parse(response)
-
             if request.user:
+                opt = random.randint(1000, 9999)
+                opt_message = "Verification code is {0}".format(opt)
+                smsWireless = SmsWireless(phone, opt_message)
+                response = smsWireless.sendSMSWithGet()
+
+                sms_obj = xmltodict.parse(response)
+
                 request.user.opt = opt
                 request.user.save()
 
                 return JsonResponse(
                     {'status': True, 'data': request.user.phone_primary,'sms_response':sms_obj,'opt': str(opt)}, status=HTTPStatus.ACCEPTED)
+            else:
+                message = "Please submit valid User."
+                return JsonResponse(
+                    {'status': True, 'data': message}, status=HTTPStatus.BAD_REQUEST)
+
+        except Exception as e:
+            message = "Please submit valid User."
+            print(str(e) + "Exception")
+            return JsonResponse(
+                {'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+    @action(detail=False, methods=['get'], url_path='(?P<opt>[\w-]+)/opt_validate', permission_classes=[])
+    def get_opt_validate(self, request, opt):
+        try:
+            if request.user:
+                query_set = User.objects.filter(opt=opt)
+                if query_set.exists() > 0:
+                    user_data = UserSerializer(query_set[0]).data
+                    return JsonResponse(
+                        {'status': True, 'data': "Successfully verified"},
+                        status=HTTPStatus.ACCEPTED)
+                else:
+                    message = "Please submit valid Verification CODE."
+                    return JsonResponse(
+                        {'status': True, 'data': message}, status=HTTPStatus.BAD_REQUEST)
             else:
                 message = "Please submit valid User."
                 return JsonResponse(
@@ -119,6 +144,7 @@ class UserList(viewsets.ModelViewSet):
             print(str(e))
             return JsonResponse(
                 {'status': True, 'data':message},status=HTTPStatus.EXPECTATION_FAILED)
+
 
 
 class UserByUsernameList(viewsets.ModelViewSet):
