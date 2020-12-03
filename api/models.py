@@ -15,8 +15,6 @@ from django.utils import timezone
 from django.db.models import Q
 
 
-
-
 def image_variations():
     return {
         'large': (600, 400),
@@ -24,15 +22,16 @@ def image_variations():
         'medium': (300, 200)
     }
 
-def image_storage(fil_path):
-    location=u'{0}/'.format(fil_path)
-    return location
 
+def image_storage(fil_path):
+    location = u'{0}/'.format(fil_path)
+    return location
 
 
 def image_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
     return u'picture/{0}'.format(filename)
+
 
 class UserCategory(models.Model):
     category_name = models.CharField(max_length=200)
@@ -48,8 +47,6 @@ class UserCategory(models.Model):
         ordering = ['category_name', 'description', 'created_at', 'deleted_at']
 
 
-
-
 class CustomUser(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
 
@@ -63,16 +60,16 @@ class CustomUser(AbstractUser):
         ("Female", "Female"),
         ("Other", "Other"),
     )
-    image_medium = StdImageField(upload_to= image_storage('member_user/medium'), variations={
-            'medium': (300, 200)
-        },blank=True, null=True)
-    image_thumbnail =StdImageField(upload_to= image_storage('member_user/thumbnail'), variations={
-           'thumbnail': (100, 100, True),
-        },blank=True, null=True)
+    image_medium = StdImageField(upload_to=image_storage('member_user/medium'), variations={
+        'medium': (300, 200)
+    }, blank=True, null=True)
+    image_thumbnail = StdImageField(upload_to=image_storage('member_user/thumbnail'), variations={
+        'thumbnail': (100, 100, True),
+    }, blank=True, null=True)
     phone_primary = models.CharField(max_length=200, null=True, blank=True)
     phone_secondary = models.CharField(max_length=200, null=True, blank=True)
     club_ac_number = models.CharField(max_length=200, blank=True)
-    category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING,null=True, blank=True)
+    category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING, null=True, blank=True)
     designation = models.CharField(max_length=250, null=True, blank=True)
     membership_date = models.DateField(null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
@@ -107,24 +104,24 @@ User = get_user_model()
 
 
 class StuffUser(models.Model):
-      stuff_name = models.CharField(max_length= 200)
-      image_medium = StdImageField(upload_to= image_storage('stuff_user/medium'), variations={
-            'medium': (300, 200)
-        },blank=True, null=True)
-      image_thumbnail =StdImageField(upload_to= image_storage('stuff_user/thumbnail'), variations={
-           'thumbnail': (100, 100, True),
-        },blank=True, null=True)
-      designation_group = models.CharField(max_length= 300)
-      designation = models.CharField(max_length= 300)
-      mobile_number_primary = models.CharField(max_length= 300)
-      mobile_number_secondary = models.CharField(max_length= 300, null=True, blank=True)
-      created_at = models.DateTimeField(null=True, blank=True)
+    stuff_name = models.CharField(max_length=200)
+    image_medium = StdImageField(upload_to=image_storage('stuff_user/medium'), variations={
+        'medium': (300, 200)
+    }, blank=True, null=True)
+    image_thumbnail = StdImageField(upload_to=image_storage('stuff_user/thumbnail'), variations={
+        'thumbnail': (100, 100, True),
+    }, blank=True, null=True)
+    designation_group = models.CharField(max_length=300)
+    designation = models.CharField(max_length=300)
+    mobile_number_primary = models.CharField(max_length=300)
+    mobile_number_secondary = models.CharField(max_length=300, null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
 
-      def __str__(self):
-          return self.stuff_name
+    def __str__(self):
+        return self.stuff_name
 
-      class Meta:
-          ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary']
+    class Meta:
+        ordering = ['stuff_name', 'designation_group', 'designation', 'mobile_number_primary']
 
 
 class MessageManager(models.Manager):
@@ -137,17 +134,50 @@ class MessageManager(models.Manager):
         return self.filter(
             Q(recipient=user) | Q(sender=user),
             recipient_deleted_at__isnull=True,
-            parent_msg=0
+            parent_msg=None
         )
 
-    def inbox_for_single_user(self, user,parent_id):
+    def count_unread_message(self, user, recipient, max_limit=5):
+        """
+        Returns all messages that were received by the given user and are not
+        marked as deleted.
+        """
+        sql = self.filter(
+            Q(recipient=user) & Q(sender=recipient) | Q(recipient=recipient) & Q(sender=user),
+            read_at=None,
+            recipient_deleted_at__isnull=True)[:max_limit]
+        print(sql.query)
+        return len(sql)
+
+    def parent_for(self, user, recipient):
         """
         Returns all messages that were received by the given user and are not
         marked as deleted.
         """
         return self.filter(
+            Q(recipient=user) & Q(sender=recipient) | Q(recipient=recipient) & Q(sender=user),
             recipient_deleted_at__isnull=True,
-            parent_msg=parent_id
+            parent_msg=None
+        )
+
+    def inbox_for_single_user(self, user, parent_id):
+        """
+        Returns all messages that were received by the given user and are not
+        marked as deleted.
+        """
+        return self.filter(
+            Q(parent_msg=parent_id) | Q(id=parent_id),
+            recipient_deleted_at__isnull=True
+        )
+
+    def select_for_single_user(self, user, recipient):
+        """
+        Returns all messages that were received by the given user and are not
+        marked as deleted.
+        """
+        return self.filter(
+            Q(recipient=user) & Q(sender=recipient) | Q(recipient=recipient) & Q(sender=user),
+            recipient_deleted_at__isnull=True,
         )
 
     def outbox_for(self, user):
@@ -177,7 +207,8 @@ class MessageManager(models.Manager):
 class MessageUser(models.Model):
     subject = models.TextField(max_length=2000)
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    recipient = models.ForeignKey(User, related_name='received_messages', null=True, blank=True, on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, related_name='received_messages', null=True, blank=True,
+                                  on_delete=models.CASCADE)
     parent_msg = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     sent_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     read_at = models.DateTimeField(null=True, blank=True)
@@ -208,7 +239,6 @@ class MessageUser(models.Model):
         verbose_name_plural = _("Messages")
 
 
-
 class NoticeBoard(models.Model):
     title = models.CharField(max_length=100)
     message = models.TextField(max_length=2000)
@@ -217,10 +247,10 @@ class NoticeBoard(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, null=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
-    
+
     def __str__(self):
         return self.title
-    
+
     class Meta:
         ordering = ['title', 'message', 'tag', 'created_at', 'updated_at']
 
@@ -232,50 +262,57 @@ class Event(models.Model):
     end_date = models.DateField(null=True)
     url = models.URLField(blank=True)
     description = models.TextField()
-    image_medium = StdImageField(upload_to= image_storage('event/medium'), variations={
-            'medium': (300, 200)
-        },blank=True, null=True)
-    image_thumbnail =StdImageField(upload_to= image_storage('event/thumbnail'), variations={
-           'thumbnail': (100, 100, True),
-        },blank=True, null=True)
+    image_medium = StdImageField(upload_to=image_storage('event/medium'), variations={
+        'medium': (300, 200)
+    }, blank=True, null=True)
+    image_thumbnail = StdImageField(upload_to=image_storage('event/thumbnail'), variations={
+        'thumbnail': (100, 100, True),
+    }, blank=True, null=True)
     image_alt_text = models.CharField(max_length=250, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=True)
+
     def __str__(self):
         return self.name
+
     class Meta:
         ordering = ['start_date', 'end_date', 'name', 'slug', 'created']
+
 
 class ClubFacility(models.Model):
     name = models.CharField(max_length=250)
     description = models.TextField()
-    image_medium = StdImageField(upload_to= image_storage('club_facility/medium'), variations={
-            'medium': (300, 200)
-        },blank=True, null=True)
-    image_thumbnail =StdImageField(upload_to= image_storage('club_facility/thumbnail'), variations={
-           'thumbnail': (100, 100, True),
-        },blank=True, null=True)
+    image_medium = StdImageField(upload_to=image_storage('club_facility/medium'), variations={
+        'medium': (300, 200)
+    }, blank=True, null=True)
+    image_thumbnail = StdImageField(upload_to=image_storage('club_facility/thumbnail'), variations={
+        'thumbnail': (100, 100, True),
+    }, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)
+
     def __str__(self):
         return self.name
-    
+
     class Meta:
         ordering = ['name', 'description']
+
+
 class ClubFacilityDetail(models.Model):
     name = models.CharField(max_length=250)
     club_facility = models.ForeignKey(ClubFacility, on_delete=models.DO_NOTHING)
     description = models.TextField()
-    image_medium = StdImageField(upload_to= image_storage('club_facility_detail/medium'), variations={
-            'medium': (300, 200)
-        },blank=True, null=True)
-    image_thumbnail =StdImageField(upload_to= image_storage('club_facility_detail/thumbnail'), variations={
-           'thumbnail': (100, 100, True),
-        },blank=True, null=True)
+    image_medium = StdImageField(upload_to=image_storage('club_facility_detail/medium'), variations={
+        'medium': (300, 200)
+    }, blank=True, null=True)
+    image_thumbnail = StdImageField(upload_to=image_storage('club_facility_detail/thumbnail'), variations={
+        'thumbnail': (100, 100, True),
+    }, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)
+
     def __str__(self):
         return self.name
-    
+
     class Meta:
-        ordering = ['name', 'description', 'image_medium','image_thumbnail']
+        ordering = ['name', 'description', 'image_medium', 'image_thumbnail']
