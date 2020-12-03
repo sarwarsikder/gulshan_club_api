@@ -44,7 +44,7 @@ class UserList(viewsets.ModelViewSet):
                 user_data = UserSerializer(user_filter, many=True).data
                 print(user_data)
                 return JsonResponse(
-                    {'status': True, 'data': user_data.data}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': user_data.data}, status=HTTPStatus.OK)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
@@ -62,7 +62,7 @@ class UserList(viewsets.ModelViewSet):
                 user = request.user
                 user_data= UserSerializer(user).data
                 return JsonResponse(
-                    {'status': True, 'data': user_data}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': user_data}, status=HTTPStatus.OK)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
@@ -88,7 +88,7 @@ class UserList(viewsets.ModelViewSet):
                 request.user.save()
 
                 return JsonResponse(
-                    {'status': True, 'data': request.user.phone_primary,'sms_response':sms_obj,'opt': str(opt)}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': request.user.phone_primary,'sms_response':sms_obj,'opt': str(opt)}, status=HTTPStatus.OK)
             else:
                 message = "Please submit valid User."
                 return JsonResponse(
@@ -133,7 +133,7 @@ class UserList(viewsets.ModelViewSet):
                 response = {'status': False, 'message': ''}
                 user_data = UserSerializer(query_set[0]).data
                 return JsonResponse(
-                    {'status': True, 'data': user_data['phone_primary'],'sms':response},status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': user_data['phone_primary'],'sms':response},status=HTTPStatus.OK)
             else:
                 message = "Please submit valid User."
                 return JsonResponse(
@@ -158,7 +158,7 @@ class UserByUsernameList(viewsets.ModelViewSet):
         try:
             if request.user:
                 return JsonResponse(
-                    {'status': True, 'data': request.user.phone_primary}, status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': request.user.phone_primary}, status=HTTPStatus.OK)
             else:
                 message = "Please submit valid User."
                 return JsonResponse(
@@ -178,7 +178,7 @@ class UserByUsernameList(viewsets.ModelViewSet):
                 response = {'status': False, 'message': ''}
                 user_data = UserSerializer(query_set[0]).data
                 return JsonResponse(
-                    {'status': True, 'data': user_data['phone_primary'],'sms':response},status=HTTPStatus.ACCEPTED)
+                    {'status': True, 'data': user_data['phone_primary'],'sms':response},status=HTTPStatus.OK)
             else:
                 message = "Please submit valid User."
                 return JsonResponse(
