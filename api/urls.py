@@ -7,11 +7,13 @@ from api.views.notice_board_views import NoticeBoardList, NoticeBoardDetails
 from api.views.user_stuff_views import UserStuffList, UserStuffDetails
 from api.views.club_facility_views import ClubFacilityList, ClubFacilityDetails
 from api.views.club_facility_detail_views import  ClubFacilityDeailsList, ClubFacilityDetailDetails
+from api.views.message_views import MessageView
 
 
 router = routers.DefaultRouter()
 router.register(r'opt_operation', UserByUsernameList)
 router.register(r'users', UserList)
+router.register(r'messages', MessageView)
 router.register(r'stuff_users', UserStuffList)
 
 
