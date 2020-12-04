@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 admin.site.site_header = "Gulshan Club"
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('api/v1/', include('api.urls')),
     # ...
