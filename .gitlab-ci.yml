@@ -11,8 +11,8 @@ before_script:
   - docker-compose --version
 
 stages:
-  #- test
-  #- build
+  - test
+  - build
   - deploy
 
 variables:
