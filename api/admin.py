@@ -38,7 +38,7 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
                  'profession',
                  'education'
             )}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'groups', 'user_permissions')}),
     )
     add_fieldsets = (
         (None, {
@@ -72,10 +72,12 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
                  'religion',
                  'gender',
                  'profession',
-                 'education'
+                 'education',
+
                  )
             }
         ),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'user_permissions')}),
     )
     search_fields = ('email',)
     ordering = ('email',)
