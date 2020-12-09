@@ -2,24 +2,19 @@ from django.contrib.auth.models import User, Group
 from rest_framework import generics, permissions
 from api.serializer.user_serializers import UserSerializer, GroupSerializer
 from django.contrib.auth import get_user_model
-from rest_framework.views import APIView
 User = get_user_model()
 
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
-from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets
-from rest_framework.decorators import action, permission_classes, authentication_classes
-from django.http import HttpResponse, JsonResponse
-import json, xmltodict
+from rest_framework.decorators import action, permission_classes
+from django.http import JsonResponse
+import xmltodict
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from http import HTTPStatus
-import requests
-import urllib
+from django.db.models import Q
 from api.service.sms_service import  SmsWireless
 from api.filter.filters import UserFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, pagination, filters
+from rest_framework import viewsets, filters
 import random
 
 
@@ -38,13 +33,18 @@ class UserList(viewsets.ModelViewSet):
         try:
             if request.user.is_authenticated:
                 user_list = User.objects.all()
-                user_filter = UserFilter(request.GET.get('member_name'), queryset= user_list)
+                search_string = request.GET.get('member_name')
+                # user_filter = User.objects.filter(
+                #     Q(first_name=search_string) | Q(last_name=search_string),
+                # )
+
+                user_filter = User.objects.filter(first_name__contains=search_string) | User.objects.filter(last_name__contains=search_string)
+
                 print(user_filter)
                 #user_data = UserSerializer(instance=user_filter, many=True).data
                 user_data = UserSerializer(user_filter, many=True).data
-                print(user_data)
                 return JsonResponse(
-                    {'status': True, 'data': user_data.data}, status=HTTPStatus.OK)
+                    {'status': True, 'data': user_data}, status=HTTPStatus.OK)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
