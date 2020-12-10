@@ -9,10 +9,12 @@ class UserStuffSerializer(serializers.ModelSerializer):
     image_thumbnail = serializers.SerializerMethodField('get_image_thumbnail')
 
     def get_image_medium(self, obj):
-        return '%s%s' % (settings.MEDIA_URL, obj.image_medium)
+        if (obj.image_medium):
+            return '%s%s' % (settings.MEDIA_URL, obj.image_medium)
 
     def get_image_thumbnail(self, obj):
-        return '%s%s' % (settings.MEDIA_URL, obj.image_thumbnail)
+        if (obj.image_thumbnail):
+            return '%s%s' % (settings.MEDIA_URL, obj.image_thumbnail)
 
     class Meta:
         model = StuffUser
