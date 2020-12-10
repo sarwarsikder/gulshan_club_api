@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from  ..models import StuffUser
+from ..models import StuffUser
 from django.conf import settings
 
 
