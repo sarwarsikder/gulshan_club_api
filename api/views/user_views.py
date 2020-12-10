@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Group
 from rest_framework import generics, permissions
+
 from api.serializer.user_serializers import UserSerializer, GroupSerializer
-from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -10,9 +12,7 @@ from django.http import JsonResponse
 import xmltodict
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from http import HTTPStatus
-from django.db.models import Q
 from api.service.sms_service import  SmsWireless
-from api.filter.filters import UserFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 import random
