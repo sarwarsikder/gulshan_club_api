@@ -1,20 +1,21 @@
 from django.urls import path
 from rest_framework import routers
 
-from api.views.user_views import UserList, UserDetails, GroupList, UserByUsernameList
-from api.views.event_views import EventList, EventDetails
-from api.views.notice_board_views import NoticeBoardList, NoticeBoardDetails
-from api.views.user_stuff_views import UserStuffList, UserStuffDetails
+from api.views.club_facility_detail_views import ClubFacilityDeailsList, ClubFacilityDetailDetails
 from api.views.club_facility_views import ClubFacilityList, ClubFacilityDetails
-from api.views.club_facility_detail_views import  ClubFacilityDeailsList, ClubFacilityDetailDetails
+from api.views.event_views import EventList, EventDetails
 from api.views.message_views import MessageView
-
+from api.views.notice_board_views import NoticeBoardList, NoticeBoardDetails
+from api.views.user_stuff_views import UserStuffList
+from api.views.user_views import UserList, GroupList, UserByUsernameList
+from api.views.views import StoreManager
 
 router = routers.DefaultRouter()
 router.register(r'opt_operation', UserByUsernameList)
 router.register(r'users', UserList)
 router.register(r'messages', MessageView)
 router.register(r'stuff_users', UserStuffList)
+router.register(r'store', StoreManager, basename='')
 
 
 urlpatterns = [
