@@ -10,3 +10,4 @@ env_ghulshan
 env
 #Database 
 db.sqlite3
+venv
