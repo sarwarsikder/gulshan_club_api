@@ -60,6 +60,12 @@ class CustomUser(AbstractUser):
         ("Female", "Female"),
         ("Other", "Other"),
     )
+
+    user_status = (
+        ("active", "Active"),
+        ("inactive", "Inactive"),
+    )
+
     image_medium = StdImageField(upload_to=image_storage('member_user/medium'), variations={
         'medium': (300, 200)
     }, blank=True, null=True)
@@ -87,6 +93,7 @@ class CustomUser(AbstractUser):
     education = models.TextField(null=True, blank=True)
     opt = models.CharField(max_length=10, null=True, blank=True)
     opt_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    status = models.CharField(choices=user_status, max_length=50, null=True, blank=True, default='Active')
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)

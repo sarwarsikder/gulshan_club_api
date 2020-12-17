@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Group
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import generics, permissions
 
 from api.serializer.user_serializers import UserSerializer, GroupSerializer
+from api.service import paginator_service
 
 User = get_user_model()
 
@@ -141,6 +143,60 @@ class UserList(viewsets.ModelViewSet):
             print(str(e))
             return JsonResponse(
                 {'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+    @action(detail=False, methods=['get'], url_path='inactive-users')
+    def get_inactive_user(self, request):
+        try:
+            if request.user.is_authenticated:
+                results = []
+                user_list = User.objects.filter(status="inactive")
+                paginator = Paginator(user_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    user_list = paginator.page(page)
+                except PageNotAnInteger:
+                    user_list = paginator.page(1)
+                except EmptyPage:
+                    user_list = paginator.page(paginator.num_pages)
+
+                user_data = UserSerializer(user_list, many=True).data
+                results.append(user_data)
+
+                return paginator_service.response_paginated(user_list, results, request)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+    @action(detail=False, methods=['get'], url_path='active-users')
+    def get_active_user(self, request):
+        try:
+            if request.user.is_authenticated:
+                results = []
+                user_list = User.objects.filter(status="active")
+                paginator = Paginator(user_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    user_list = paginator.page(page)
+                except PageNotAnInteger:
+                    user_list = paginator.page(1)
+                except EmptyPage:
+                    user_list = paginator.page(paginator.num_pages)
+
+                user_data = UserSerializer(user_list, many=True).data
+                results.append(user_data)
+
+                return paginator_service.response_paginated(user_list, results, request)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
 
 class UserByUsernameList(viewsets.ModelViewSet):
