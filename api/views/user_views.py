@@ -149,7 +149,7 @@ class UserList(viewsets.ModelViewSet):
         try:
             if request.user.is_authenticated:
                 results = []
-                user_list = User.objects.filter(status="inactive")
+                user_list = User.objects.filter(is_active=False)
                 paginator = Paginator(user_list, 10)
                 page = request.GET.get('page', 1)
                 try:
@@ -176,7 +176,7 @@ class UserList(viewsets.ModelViewSet):
         try:
             if request.user.is_authenticated:
                 results = []
-                user_list = User.objects.filter(status="active")
+                user_list = User.objects.filter(is_active=True)
                 paginator = Paginator(user_list, 10)
                 page = request.GET.get('page', 1)
                 try:

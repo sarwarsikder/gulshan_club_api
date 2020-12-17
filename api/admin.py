@@ -39,7 +39,7 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
             'gender',
             'profession',
             'education',
-            'status'
+            # 'status'
         )}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'groups',)}),
     )
