@@ -36,12 +36,42 @@ class UserList(viewsets.ModelViewSet):
                 #     Q(first_name=search_string) | Q(last_name=search_string),
                 # )
 
-                user_filter = User.objects.filter(first_name__contains=search_string) | User.objects.filter(
+                user_filter = User.objects.filter(
+                    status=True) & User.objects.filter(first_name__contains=search_string) | User.objects.filter(
                     last_name__contains=search_string) | User.objects.filter(
                     username__contains=search_string) | User.objects.filter(
                     phone_primary__contains=search_string)
 
                 print(user_filter)
+                # user_data = UserSerializer(instance=user_filter, many=True).data
+                user_data = UserSerializer(user_filter, many=True).data
+                return JsonResponse(
+                    {'status': True, 'data': user_data}, status=HTTPStatus.OK)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Please submit valid User."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+    @action(detail=False, methods=['get'], url_path='inactive_user_search')
+    def inactive_user_search(self, request):
+        try:
+            if request.user.is_authenticated:
+                user_list = User.objects.all()
+                search_string = request.GET.get('member_name')
+                # user_filter = User.objects.filter(
+                #     Q(first_name=search_string) | Q(last_name=search_string),
+                # )
+                print('Inactive User')
+                user_filter = User.objects.filter(
+                    status=False) & User.objects.filter(first_name__contains=search_string) | User.objects.filter(
+                    last_name__contains=search_string) | User.objects.filter(
+                    username__contains=search_string) | User.objects.filter(
+                    phone_primary__contains=search_string)
+
+                print(user_filter.query)
                 # user_data = UserSerializer(instance=user_filter, many=True).data
                 user_data = UserSerializer(user_filter, many=True).data
                 return JsonResponse(
