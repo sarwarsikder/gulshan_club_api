@@ -160,9 +160,9 @@ class UserList(viewsets.ModelViewSet):
                     user_list = paginator.page(paginator.num_pages)
 
                 user_data = UserSerializer(user_list, many=True).data
-                results.append(user_data)
+                #results.append(user_data)
 
-                return paginator_service.response_paginated(user_list, results, request)
+                return paginator_service.response_paginated(user_list, user_data, request)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
@@ -189,7 +189,7 @@ class UserList(viewsets.ModelViewSet):
                 user_data = UserSerializer(user_list, many=True).data
                 results.append(user_data)
 
-                return paginator_service.response_paginated(user_list, results, request)
+                return paginator_service.response_paginated(user_list, user_data, request)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
