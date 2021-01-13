@@ -262,6 +262,64 @@ class UserList(viewsets.ModelViewSet):
             message = "Something went wrong."
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+            
+    @action(detail=False, methods=['get'], url_path='active-bod-users')
+    def get_active_bod_user(self, request):
+        try:
+            if request.user.is_authenticated:
+                results = []
+                user_list = User.objects.filter(status='doard_director')
+                paginator = Paginator(user_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    user_list = paginator.page(page)
+                except PageNotAnInteger:
+                    user_list = paginator.page(1)
+                except EmptyPage:
+                    user_list = paginator.page(paginator.num_pages)
+
+                user_data = UserSerializer(user_list, many=True).data
+                results.append(user_data)
+
+                return paginator_service.response_paginated_user(user_list, user_data, request)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+    
+    @action(detail=False, methods=['get'], url_path='active-bod-users-search')
+    def inactive_user_search(self, request):
+        try:
+            if request.user.is_authenticated:
+                user_list = User.objects.all()
+                search_string = request.GET.get('member_name')
+                # user_filter = User.objects.filter(
+                #     Q(first_name=search_string) | Q(last_name=search_string),
+                # )
+                print('Inactive User')
+                user_filter = User.objects.filter(
+                    Q(status='doard_director') & (Q(first_name__contains=search_string) |
+                    Q(last_name__contains=search_string) |
+                    Q(username__contains=search_string) |
+                    Q(phone_primary__contains=search_string))
+
+                )
+
+                print(user_filter.query)
+                # user_data = UserSerializer(instance=user_filter, many=True).data
+                user_data = UserSerializer(user_filter, many=True).data
+                return JsonResponse(
+                    {'status': True, 'data': user_data}, status=HTTPStatus.OK)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Please submit valid User."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
 
 class UserByUsernameList(viewsets.ModelViewSet):

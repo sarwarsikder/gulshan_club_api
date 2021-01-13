@@ -1,18 +1,14 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from stdimage import StdImageField
-from django.contrib.auth.models import User, AbstractBaseUser, AbstractUser
-from django.contrib.auth.models import PermissionsMixin
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from stdimage import StdImageField
+
 from .managers import CustomUserManager
 
-from django.contrib.auth import get_user_model
+
 # Create your models here.
-
-
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-from django.utils import timezone
-from django.db.models import Q
 
 
 def image_variations():
@@ -62,6 +58,7 @@ class CustomUser(AbstractUser):
     )
 
     user_status = (
+        ("doard_director", "Board Of Director"),
         ("active", "Active"),
         ("inactive", "Inactive"),
     )
