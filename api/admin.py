@@ -16,6 +16,7 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
         (None, {'fields': (
+            'username',
             'email',
             "image_medium",
             "image_thumbnail",
