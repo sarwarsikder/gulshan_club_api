@@ -135,12 +135,13 @@ class MessageManager(models.Manager):
         Returns all messages that were received by the given user and are not
         marked as deleted.
         """
-        return self.filter(
+        sql = self.filter(
             Q(recipient=user) | Q(sender=user),
             recipient_deleted_at__isnull=True,
             parent_msg=None
         )
-
+        print(sql.query)
+        return sql
     def count_unread_message(self, user, recipient, max_limit=5):
         """
         Returns all messages that were received by the given user and are not
@@ -150,7 +151,6 @@ class MessageManager(models.Manager):
             Q(recipient=user) & Q(sender=recipient) | Q(recipient=recipient) & Q(sender=user),
             read_at=None,
             recipient_deleted_at__isnull=True)[:max_limit]
-        print(sql.query)
         return len(sql)
 
     def get_last_message(self, user, recipient, max_limit=5):

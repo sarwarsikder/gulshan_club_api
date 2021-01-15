@@ -36,16 +36,19 @@ class MessageView(viewsets.ModelViewSet):
                 except EmptyPage:
                     message_list = paginator.page(paginator.num_pages)
 
-                for ml in message_list:
-                    print(ml.recipient)
-                    user_data = UserMessageSerializer(ml).data
-                    temp_count = MessageUser.objects.count_unread_message(user=request.user, recipient=ml.recipient,
-                                                                          max_limit=5)
-                    last_message_data = MessageUser.objects.get_last_message(user=request.user, recipient=ml.recipient,
-                                                                             max_limit=1)
-                    message_data = UserMessageTinySerializer(last_message_data[0]).data
 
-                    print(message_data['subject'])
+                for ml in message_list:
+                    print(" Message LIst " + str(message_list))
+                    user_data = UserMessageSerializer(ml).data
+                    temp_count = MessageUser.objects.count_unread_message(user=ml.sender, recipient=ml.recipient,
+                                                                          max_limit=5)
+                    print("TEST " + str(ml.recipient))
+
+                    last_message_data = MessageUser.objects.get_last_message(user=ml.sender, recipient=ml.recipient,
+                                                                             max_limit=1)
+
+                    message_data = UserMessageTinySerializer(last_message_data[0]).data
+                    print("TEST ONE" + str(message_data))
                     user_data['subject'] = message_data['subject']
                     if temp_count >= 5:
                         user_data['count'] = "5+"
