@@ -166,3 +166,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'media')
 )
+
+BASE_URL = 'http://58.84.34.65:9090/'
