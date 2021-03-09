@@ -22,8 +22,11 @@ class UserStuffList(viewsets.ModelViewSet):
     def user_search(self, request, *args, **kwargs):
         try:
             if request.user.is_authenticated:
-                user_data = UserStuffSerializer(
-                    StuffUser.objects.filter(stuff_name__contains=request.GET.get('stuff_name')), many=True).data
+                user_filter = StuffUser.objects.filter(stuff_name__contains=request.GET.get('stuff_name')) | StuffUser.objects.filter(
+                    designation__contains=request.GET.get('stuff_name')) |  StuffUser.objects.filter(
+                    designation_group__contains=request.GET.get('stuff_name'))
+
+                user_data = UserStuffSerializer(user_filter, many=True).data
                 return JsonResponse(
                     {'status': True, 'data': user_data}, status=HTTPStatus.ACCEPTED)
             else:
