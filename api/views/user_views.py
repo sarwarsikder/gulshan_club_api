@@ -305,6 +305,7 @@ class UserList(viewsets.ModelViewSet):
                     Q(status='doard_director') & (Q(first_name__contains=search_string) |
                     Q(last_name__contains=search_string) |
                     Q(username__contains=search_string) |
+                    Q(club_ac_number__contains=search_string) |
                     Q(phone_primary__contains=search_string))
 
                 )
