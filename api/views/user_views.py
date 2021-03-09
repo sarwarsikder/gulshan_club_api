@@ -42,7 +42,8 @@ class UserList(viewsets.ModelViewSet):
                     status=True) & User.objects.filter(first_name__contains=search_string) | User.objects.filter(
                     last_name__contains=search_string) | User.objects.filter(
                     username__contains=search_string) | User.objects.filter(
-                    phone_primary__contains=search_string)
+                    phone_primary__contains=search_string) | User.objects.filter(
+                    club_ac_number__contains=search_string)
 
                 print(user_filter)
                 # user_data = UserSerializer(instance=user_filter, many=True).data
