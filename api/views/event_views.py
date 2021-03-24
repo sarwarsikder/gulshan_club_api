@@ -29,7 +29,7 @@ class EventList(generics.ListAPIView):
             event_data = EventSerializer(queryset, many=True).data
         else:
             serializer = EventSerializer(queryset, many=True)
-            event_data = EventSerializer(event_list, many=True).data
+            event_data = EventSerializer(queryset, many=True).data
 
         
 
