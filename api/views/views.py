@@ -8,6 +8,26 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 
+
+# function based views.py
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+
+
+@api_view(['POST'])
+# other decorators if required
+@permission_classes([IsAuthenticated])
+def user_create(request):
+    user_data = 'test'
+    return JsonResponse(
+                    {'status': True, 'data': user_data}, status=HTTPStatus.OK)
+
+
+
 class StoreManager(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='store_factory_manager')
     def store_manager_factory(self,request):

@@ -3,6 +3,8 @@ from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import generics, permissions
 from django.db.models import Q
+from django.contrib.auth.hashers import make_password
+
 
 
 from api.serializer.user_serializers import UserSerializer, GroupSerializer
@@ -19,6 +21,30 @@ from api.service.sms_service import SmsWireless
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 import random
+import json
+
+from rest_framework.parsers import MultiPartParser
+from rest_framework.views import APIView
+from rest_framework.response import Response
+ 
+from pyexcel_xlsx import get_data
+
+from django.http import HttpResponseBadRequest
+from django import forms
+from django.template import RequestContext
+import django_excel as excel
+from openpyxl import load_workbook
+from io import BytesIO
+from django.core.files.storage import FileSystemStorage
+import pandas as pd
+from django.conf import settings
+import os
+from re import search
+from PIL import Image
+
+
+
+
 
 
 class UserList(viewsets.ModelViewSet):
@@ -27,6 +53,8 @@ class UserList(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     filterset_fields = ["first_name", "last_name"]
+    parser_classes = (MultiPartParser,)
+
 
     @action(detail=False, methods=['get'], url_path='user_search')
     def user_search(self, request):
@@ -234,6 +262,53 @@ class UserList(viewsets.ModelViewSet):
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
         except Exception as e:
             message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+    
+    @action(detail=False, methods=['post'], url_path='upload-users')
+    def  user_upload(self, request):
+        try:
+            if request.user.is_authenticated:
+                BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                excel_file = request.FILES["excel_file"]
+                fs = FileSystemStorage()
+                filename = fs.save(excel_file.name, excel_file)
+                uploaded_file_url = fs.path(filename)
+                #df = pd.read_excel(FILES_DIR+ "" + uploaded_file_url)
+                FILES_DIR = os.path.abspath(uploaded_file_url)
+                # image.save(imagefile,’JPEG’, quality=90)
+                df = pd.read_excel(open(FILES_DIR, 'rb'), sheet_name='GridViewExport')
+                User.objects.all().delete()
+                for i, row in df.iterrows():
+
+                    try:
+                        user_username = User.objects.filter(username=row['Account'])
+                        user_email = User.objects.filter(email=row['E-mail'])
+                        if user_username.exists() or user_email.exists():
+                            print("TEST")
+                            user_username.update()
+                        else:
+                            print("TEST ELSE")
+                            userObj = User()
+                            userObj.username = row['Account']
+                            userObj.password = make_password('!@#$1234')
+                            email = row['E-mail']
+                            substring = ';'
+                            if search(substring, email):
+                                email = email.split(substring)
+                                email = email[0]
+
+                            userObj.email = email
+                            userObj.phone_primary = row['Mobile']
+                            userObj.image_medium = 'member_user/medium/'+ row['Account'] +'.JPG'
+                            userObj.image_thumbnail = 'member_user/thumbnail/'+ row['Account'] +'.JPG'
+                            userObj.save()
+                    except Exception as err:
+                        print("An exception occurred" + str(err))
+                message = "TEst"
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.OK)
+        except Exception as e:
+            message = "Something went wrong." + str(e)
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 

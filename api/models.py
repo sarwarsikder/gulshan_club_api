@@ -44,7 +44,7 @@ class UserCategory(models.Model):
 
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('email address'))
 
     material_types = (
         ("Married", "Married"),
