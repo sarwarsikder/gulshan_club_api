@@ -283,7 +283,7 @@ class UserList(viewsets.ModelViewSet):
                     try:
                         user_username = User.objects.filter(username=row['Account'])
                         user_email = User.objects.filter(email=row['E-mail'])
-                        if user_username.exists() or user_email.exists():
+                        if user_username.exists():
                             print("TEST")
                             user_username.update()
                         else:
