@@ -278,7 +278,6 @@ class UserList(viewsets.ModelViewSet):
                 FILES_DIR = os.path.abspath(uploaded_file_url)
                 # image.save(imagefile,’JPEG’, quality=90)
                 df = pd.read_excel(open(FILES_DIR, 'rb'), sheet_name='GridViewExport')
-                User.objects.all().delete()
                 for i, row in df.iterrows():
 
                     try:
