@@ -18,6 +18,8 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
         (None, {'fields': (
             'username',
             'email',
+            'first_name',
+            'last_name',
             "image_medium",
             "image_thumbnail",
             'password',

@@ -308,7 +308,12 @@ class UserList(viewsets.ModelViewSet):
                             userObj = User()
                             userObj.username = str(row['Account'])
 
-                            userObj.first_name = str(row['Members Name'])
+                           
+                            full_name = str(row['Members Name'])
+                            full_name = full_name.split(" ", 1)
+                            userObj.first_name = full_name[0]
+                            userObj.last_name = full_name[1]
+
                             substring = ' '
                             # if search(substring, full_name):
                             #     full_name = full_name.split(substring)
