@@ -7,8 +7,9 @@ from django.contrib.auth.hashers import make_password
 
 
 
-from api.serializer.user_serializers import UserSerializer, GroupSerializer
+from api.serializer.user_serializers import UserSerializer, GroupSerializer , UserCategorySerializer
 from api.service import paginator_service
+from api.models import UserCategory
 
 User = get_user_model()
 
@@ -276,31 +277,54 @@ class UserList(viewsets.ModelViewSet):
                 uploaded_file_url = fs.path(filename)
                 #df = pd.read_excel(FILES_DIR+ "" + uploaded_file_url)
                 FILES_DIR = os.path.abspath(uploaded_file_url)
+                print(BASE_DIR)
+                MEDIA_ROOT = settings.MEDIA_ROOT
                 # image.save(imagefile,’JPEG’, quality=90)
                 df = pd.read_excel(open(FILES_DIR, 'rb'), sheet_name='GridViewExport')
                 for i, row in df.iterrows():
 
                     try:
-                        user_username = User.objects.filter(username=row['Account'])
+                        user_username = User.objects.filter(username=str(row['Account']))
                         user_email = User.objects.filter(email=row['E-mail'])
-                        if user_username.exists():
+                        substring = '.'
+                        category = str(row['Category'])
+                        category_obj = UserCategory.objects.filter(category_name=str(category))
+                        if category_obj.exists():
                             print("TEST")
+                            user_category_data = UserCategorySerializer(category_obj[0]).data
+                            user_category_obj = UserCategory.objects.get(pk=user_category_data['id'])
+
+                        mobile = str(row['Mobile'])
+                        if search(substring, mobile):
+                            mobile = mobile.split(substring)
+                            mobile = mobile[0]
+                            print(mobile)
+                                
+                        if user_username.exists():
+                            user_username.phone_primary = mobile
                             user_username.update()
                         else:
                             print("TEST ELSE")
                             userObj = User()
-                            userObj.username = row['Account']
+                            userObj.username = str(row['Account'])
                             userObj.password = make_password('!@#$1234')
-                            email = row['E-mail']
+                            email = str(row['E-mail'])
                             substring = ';'
                             if search(substring, email):
                                 email = email.split(substring)
                                 email = email[0]
 
                             userObj.email = email
-                            userObj.phone_primary = row['Mobile']
-                            userObj.image_medium = 'member_user/medium/'+ row['Account'] +'.JPG'
-                            userObj.image_thumbnail = 'member_user/thumbnail/'+ row['Account'] +'.JPG'
+                            userObj.phone_primary = mobile
+
+                            if category_obj.exists():
+                                userObj.category_name = user_category_obj
+
+                            if fs.exists(MEDIA_ROOT+'/member_user/medium/'+ row['Account'] +'.JPG'):
+                                userObj.image_medium = 'member_user/medium/'+ row['Account'] +'.JPG'
+
+                            if fs.exists(MEDIA_ROOT+'/member_user/thumbnail/'+ row['Account'] +'.JPG'):
+                                userObj.image_thumbnail = 'member_user/thumbnail/'+ row['Account'] +'.JPG'
                             userObj.save()
                     except Exception as err:
                         print("An exception occurred" + str(err))
