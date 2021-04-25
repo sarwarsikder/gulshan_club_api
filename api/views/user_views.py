@@ -307,6 +307,21 @@ class UserList(viewsets.ModelViewSet):
                             print("TEST ELSE")
                             userObj = User()
                             userObj.username = str(row['Account'])
+
+                            userObj.first_name = str(row['Members Name'])
+                            substring = ' '
+                            # if search(substring, full_name):
+                            #     full_name = full_name.split(substring)
+                            #     if len(full_name[0]) == 2:
+                            #         userObj.first_name = full_name[0]
+                            #         userObj.last_name = full_name[1]
+                            #     elif len(full_name[0]) == 3:
+                            #         userObj.first_name = full_name[0]
+                            #         userObj.last_name = full_name[1]
+                            #     elif len(full_name[0]) == 4:
+                            #         userObj.first_name = full_name[0] + "" + full_name[1]
+                            #         userObj.last_name = full_name[2] + "" + full_name[3]
+
                             userObj.password = make_password('!@#$1234')
                             email = str(row['E-mail'])
                             substring = ';'
