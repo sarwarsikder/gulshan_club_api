@@ -277,7 +277,6 @@ class UserList(viewsets.ModelViewSet):
                 uploaded_file_url = fs.path(filename)
                 #df = pd.read_excel(FILES_DIR+ "" + uploaded_file_url)
                 FILES_DIR = os.path.abspath(uploaded_file_url)
-                print(BASE_DIR)
                 MEDIA_ROOT = settings.MEDIA_ROOT
                 # image.save(imagefile,’JPEG’, quality=90)
                 df = pd.read_excel(open(FILES_DIR, 'rb'), sheet_name='GridViewExport')
@@ -290,7 +289,6 @@ class UserList(viewsets.ModelViewSet):
                         category = str(row['Category'])
                         category_obj = UserCategory.objects.filter(category_name=str(category))
                         if category_obj.exists():
-                            print("TEST")
                             user_category_data = UserCategorySerializer(category_obj[0]).data
                             user_category_obj = UserCategory.objects.get(pk=user_category_data['id'])
 
@@ -304,7 +302,6 @@ class UserList(viewsets.ModelViewSet):
                             user_username.phone_primary = mobile
                             user_username.update()
                         else:
-                            print("TEST ELSE")
                             userObj = User()
                             userObj.username = str(row['Account'])
 
@@ -315,18 +312,7 @@ class UserList(viewsets.ModelViewSet):
                             userObj.last_name = full_name[1]
 
                             substring = ' '
-                            # if search(substring, full_name):
-                            #     full_name = full_name.split(substring)
-                            #     if len(full_name[0]) == 2:
-                            #         userObj.first_name = full_name[0]
-                            #         userObj.last_name = full_name[1]
-                            #     elif len(full_name[0]) == 3:
-                            #         userObj.first_name = full_name[0]
-                            #         userObj.last_name = full_name[1]
-                            #     elif len(full_name[0]) == 4:
-                            #         userObj.first_name = full_name[0] + "" + full_name[1]
-                            #         userObj.last_name = full_name[2] + "" + full_name[3]
-
+                            
                             userObj.password = make_password('!@#$1234')
                             email = str(row['E-mail'])
                             substring = ';'
@@ -336,6 +322,10 @@ class UserList(viewsets.ModelViewSet):
 
                             userObj.email = email
                             userObj.phone_primary = mobile
+
+                            # userObj.status = str(row['Member Status'])
+                            userObj.status = 'active'
+
 
                             if category_obj.exists():
                                 userObj.category_name = user_category_obj
