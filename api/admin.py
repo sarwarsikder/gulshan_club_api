@@ -86,7 +86,7 @@ class CustomUserAdmin(UserAdmin, ImportExportModelAdmin):
          ),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
-    search_fields = ('email',)
+    search_fields = ('email','username')
     ordering = ('email',)
 
 
