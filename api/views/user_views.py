@@ -122,7 +122,6 @@ class UserList(viewsets.ModelViewSet):
                     Q(phone_primary__contains=search_string))
 
                 )
-                print(user_filter.query)
                 # user_data = UserSerializer(instance=user_filter, many=True).data
                 user_data = UserSerializer(user_filter, many=True).data
                 return JsonResponse(
