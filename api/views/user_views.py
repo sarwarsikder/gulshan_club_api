@@ -418,7 +418,7 @@ class UserList(viewsets.ModelViewSet):
                 # )
                 print('Inactive User')
                 user_filter = User.objects.filter(
-                    Q(status='doard_director') &  Q(is_active=True) | (Q(first_name__contains=search_string) |
+                    Q(status='doard_director') | (Q(first_name__contains=search_string) |
                     Q(last_name__contains=search_string) |
                     Q(username__contains=search_string) |
                     Q(club_ac_number__contains=search_string) |
