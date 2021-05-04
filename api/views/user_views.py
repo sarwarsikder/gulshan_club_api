@@ -100,7 +100,7 @@ class UserList(viewsets.ModelViewSet):
                 user_filter = User.objects.filter(
                     Q(is_active=True) & (Q(first_name__contains=search_string) |
                                           Q(last_name__contains=search_string) |
-                                          Q(username__contains=search_string) |
+                                          Q(club_ac_number__contains=search_string) |
                                           Q(phone_primary__contains=search_string))
 
                 )
@@ -131,7 +131,7 @@ class UserList(viewsets.ModelViewSet):
                 user_filter = User.objects.filter(
                     Q(is_active=False) & (Q(first_name__contains=search_string) |
                     Q(last_name__contains=search_string) |
-                    Q(username__contains=search_string) |
+                    Q(club_ac_number__contains=search_string) |
                     Q(phone_primary__contains=search_string))
 
                 )
@@ -284,7 +284,6 @@ class UserList(viewsets.ModelViewSet):
 
                     try:
                         user_username = User.objects.filter(username=str(row['Account']))
-                        user_email = User.objects.filter(email=row['E-mail'])
                         substring = '.'
                         category = str(row['Category'])
                         category_obj = UserCategory.objects.filter(category_name=str(category))
@@ -296,20 +295,25 @@ class UserList(viewsets.ModelViewSet):
                         if search(substring, mobile):
                             mobile = mobile.split(substring)
                             mobile = mobile[0]
-                            print(mobile)
                                 
                         if user_username.exists():
+                            print("Existing user name found!")
                             user_username.phone_primary = mobile
+                            user_username.club_ac_number = str(row['Account'])
                             user_username.update()
                         else:
                             userObj = User()
                             userObj.username = str(row['Account'])
 
-                           
                             full_name = str(row['Members Name'])
-                            full_name = full_name.split(" ", 1)
-                            userObj.first_name = full_name[0]
-                            userObj.last_name = full_name[1]
+                            substringname = ' '
+                            if search(substringname, full_name):
+                                full_name = full_name.split(" ", 1)
+                                userObj.first_name = full_name[0]
+                                userObj.last_name = full_name[1]
+                            else:
+                                userObj.first_name = full_name
+                                userObj.last_name = ""
 
                             substring = ' '
                             
@@ -322,6 +326,7 @@ class UserList(viewsets.ModelViewSet):
 
                             userObj.email = email
                             userObj.phone_primary = mobile
+                            userObj.club_ac_number = str(row['Account'])
 
                             # userObj.status = str(row['Member Status'])
                             userObj.status = 'active'
@@ -338,6 +343,7 @@ class UserList(viewsets.ModelViewSet):
                             userObj.save()
                     except Exception as err:
                         print("An exception occurred" + str(err))
+                        print("Every Entry" + str(row))
                 message = "TEst"
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.OK)
         except Exception as e:
