@@ -62,18 +62,20 @@ class UserList(viewsets.ModelViewSet):
         try:
             if request.user.is_authenticated:
                 user_list = User.objects.all()
-                search_string = request.GET.get('member_name')
+                search_string = str(request.GET.get('member_name'))
                 # user_filter = User.objects.filter(
                 #     Q(first_name=search_string) | Q(last_name=search_string),
                 # )
+                print(search_string)
 
                 user_filter = User.objects.filter(
-                    status=True) & User.objects.filter(first_name__contains=search_string) | User.objects.filter(
-                    last_name__contains=search_string) | User.objects.filter(
-                    username__contains=search_string) | User.objects.filter(
-                    phone_primary__contains=search_string) | User.objects.filter(
-                    club_ac_number__contains=search_string)
+                    Q(is_active=True) & (Q(first_name__contains=search_string) |
+                                          Q(last_name__contains=search_string) |
+                                          Q(username__contains=search_string) |
+                                          Q(club_ac_number__contains=search_string) |
+                                          Q(phone_primary__contains=search_string))
 
+                )
                 print(user_filter)
                 # user_data = UserSerializer(instance=user_filter, many=True).data
                 user_data = UserSerializer(user_filter, many=True).data
@@ -416,7 +418,7 @@ class UserList(viewsets.ModelViewSet):
                 # )
                 print('Inactive User')
                 user_filter = User.objects.filter(
-                    Q(status='doard_director') & (Q(first_name__contains=search_string) |
+                    Q(status='doard_director') &  Q(is_active=True) | (Q(first_name__contains=search_string) |
                     Q(last_name__contains=search_string) |
                     Q(username__contains=search_string) |
                     Q(club_ac_number__contains=search_string) |

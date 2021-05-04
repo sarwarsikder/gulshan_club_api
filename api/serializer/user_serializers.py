@@ -44,7 +44,8 @@ class UserSerializer(serializers.ModelSerializer):
         "gender",
         "profession",
         "education",
-        "opt"
+        "opt",
+        "status"
         )
 
 
