@@ -396,9 +396,16 @@ class UserList(viewsets.ModelViewSet):
 
                             if fs.exists(MEDIA_ROOT+'/member_user/medium/'+ row['Account'] +'.JPG'):
                                 userObj.image_medium = 'member_user/medium/'+ row['Account'] +'.JPG'
+                            
+                            if fs.exists(MEDIA_ROOT+'/member_user/medium/'+ row['Account'] +'.jpg'):
+                                userObj.image_medium = 'member_user/medium/'+ row['Account'] +'.jpg'
 
                             if fs.exists(MEDIA_ROOT+'/member_user/thumbnail/'+ row['Account'] +'.JPG'):
                                 userObj.image_thumbnail = 'member_user/thumbnail/'+ row['Account'] +'.JPG'
+                            
+                            if fs.exists(MEDIA_ROOT+'/member_user/thumbnail/'+ row['Account'] +'.jpg'):
+                                userObj.image_thumbnail = 'member_user/thumbnail/'+ row['Account'] +'.jpg'
+                                
                             userObj.save()
                     except Exception as err:
                         print("An exception occurred" + str(err))
