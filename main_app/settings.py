@@ -142,6 +142,13 @@ SMS_CONFIG = {
 	"sid" : 'GCLeng', # Please add your own SID
 }
 
+postfields = {
+    "password": "123456Aa",
+    "userName": "test"
+    }
+
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

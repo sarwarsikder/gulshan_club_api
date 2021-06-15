@@ -42,6 +42,8 @@ from django.conf import settings
 import os
 from re import search
 from PIL import Image
+from api.service.city_bank_service import PaymentsCityBank
+
 
 
 
@@ -427,6 +429,58 @@ class UserList(viewsets.ModelViewSet):
             message = "Something went wrong." + str(e)
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+
+    @action(detail=False, methods=['post'], url_path='pay-city-bank')
+    def  user_upload(self, request):
+        try:
+            if request.user.is_authenticated:
+                    if request.method == 'POST':
+                        print(request.POST['amount'])
+
+                        amount = str(request.POST['amount'])
+                        reference_number = str(request.POST['reference'])
+
+                        if not amount:
+                            message = 'Write valid ammount'
+                            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+                        proxy =""
+                        proxyauth =""
+                        postDatatoken = '{"password": "123456Aa","userName": "test"}'
+                        serviceUrltoken =""
+                        serviceUrltoken= 'https://sandbox.thecitybank.com:7788/transaction/token'
+                        cblcz = PaymentsCityBank(postDatatoken,serviceUrltoken,proxy,proxyauth)
+                        
+                        transaction = cblcz.executePayment()    
+                        transaction_json = json.loads(transaction)
+                        
+                        transactionId = transaction_json['transactionId']
+                    
+                        postdataEcomm = '{"merchantId": "11122333","amount": "'+amount+'","currency": "050","description": "'+reference_number+'","approveUrl": "http://192.168.220.43:8080/CityBankPHP_1.0.1/Approved.php","cancelUrl": "http://192.168.220.43:8080/CityBankPHP_1.0.1/Cancelled.php","declineUrl": "http://192.168.220.43:8080/CityBankPHP_1.0.1/Declined.php","userName": "test","passWord": "123456Aa","secureToken": "'+ transactionId +'"}'
+                        serviceUrlEcomm = 'https://sandbox.thecitybank.com:7788/transaction/createorder'
+                        cblEcomm = PaymentsCityBank(postdataEcomm,serviceUrlEcomm,proxy,proxyauth)
+                        cblEcomm = cblEcomm.executePayment()    
+                        cblEcomm_json = json.loads(cblEcomm)
+
+                        orderId = cblEcomm_json['items']['orderId']
+                        sessionId = cblEcomm_json['items']['sessionId']
+                        url = cblEcomm_json['items']['url']
+
+                        redirectUrl = url+"?ORDERID="+orderId+"&SESSIONID="+sessionId
+                        return JsonResponse({'status': True, 'pay_url': redirectUrl}, status=HTTPStatus.OK)
+
+                    else:
+                            message = 'method not alloed!'
+                            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+        except Exception as e:
+            message = "Something went wrong." + str(e)
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+                    
+
+
 
     @action(detail=False, methods=['get'], url_path='active-users')
     def get_active_user(self, request):
