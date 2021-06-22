@@ -121,11 +121,14 @@ def bkash_post_payment(request):
                 postPayment.trx_id = body_data['trxID']
                 postPayment.amount = body_data['amount']
                 postPayment.currency = body_data['currency']
+                postPayment.payment_type = body_data['payment_type']
                 postPayment.merchant_invoice = body_data['merchantInvoiceNumber']
                 postPayment.transaction_status = body_data['transactionStatus']
                 postPayment.save()
                 
-                return JsonResponse({'status': True, 'data': json.loads(json_data)}, status=HTTPStatus.OK)
+                message = "Payment successfully added."
+                
+                return JsonResponse({'status': True, 'message' : message,  'data': json.loads(json_data)}, status=HTTPStatus.OK)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
