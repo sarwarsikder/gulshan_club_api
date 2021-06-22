@@ -9,6 +9,7 @@ from api.views.notice_board_views import NoticeBoardList, NoticeBoardDetails
 from api.views.user_stuff_views import UserStuffList
 from api.views.user_views import UserList, GroupList, UserByUsernameList
 from api.views.views import StoreManager
+from api.views import payment_views
 
 router = routers.DefaultRouter()
 router.register(r'opt_operation', UserByUsernameList)
@@ -21,6 +22,21 @@ router.register(r'store', StoreManager, basename='')
 urlpatterns = [
     #path('users/', UserList,name='users'),
     #path('users/<pk>/user/', UserDetails.as_view()),
+    path('payments/pay-city-bank/',
+         payment_views.city_bank_payment,
+         name = 'pay-city-bank'),
+    path('payments/city-declined/',
+         payment_views.city_on_declined,
+         name = 'city-on-declined'),
+    path('payments/city-approved/',
+         payment_views.city_on_approved,
+         name = 'city-on-approved'),
+    path('payments/city-cancelled/',
+         payment_views.city_on_cancelled,
+         name = 'city-on-cancelled'),
+    path('payments/bkash-post-payment/',
+         payment_views.bkash_post_payment,
+         name = 'bkash-post-payment'),
     path('groups/', GroupList.as_view()),
     path('events/(?P<year>.+)/$', EventList.as_view()),
     path('events/', EventList.as_view()),

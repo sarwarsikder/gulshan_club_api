@@ -25,8 +25,8 @@ SECRET_KEY = 'nrv)09@xgbzgkea1x*9*8yb8-c5c8=mdx7=d-1gvl0#(+h@r_o'
 DEBUG = True
 
 AUTH_USER_MODEL = 'api.CustomUser'
-#ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com','http://localhost']
+# ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'import_export',
     # Custom App
     'api.apps.ApiConfig',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,6 +57,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'main_app.urls'
+CORS_ORIGIN_ALLOW_ALL = True   
+
 
 TEMPLATES = [
     {
@@ -174,4 +178,5 @@ MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'media')
 )
 
-BASE_URL = 'http://58.84.34.65:9090'
+# BASE_URL = 'http://58.84.34.65:9090/'
+BASE_URL = 'http://localhost:8000/'

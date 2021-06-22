@@ -10,3 +10,4 @@ env
 #Database 
 db.sqlite3
 venv
+.vscode/settings.json

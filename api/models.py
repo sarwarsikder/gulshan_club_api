@@ -331,3 +331,24 @@ class ClubFacilityDetail(models.Model):
 
     class Meta:
         ordering = ['name', 'description', 'image_medium', 'image_thumbnail']
+        
+
+class PostPayment(models.Model):
+    payment_by = models.ForeignKey(User, related_name='payment_by', on_delete=models.CASCADE)
+    payment_to = models.ForeignKey(User, related_name='payment_to', on_delete=models.CASCADE)
+    payment_id = models.CharField(max_length=250, blank=True)
+    trx_id = models.CharField(max_length=250, blank=True)
+    amount = models.CharField(max_length=250, blank=True)
+    currency = models.CharField(max_length=10, blank=True)
+    merchant_invoice = models.CharField(max_length=250, blank=True)
+    transaction_status = models.CharField(max_length=25, blank=True)
+    payment_type = models.CharField(max_length=150, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True, editable=True)
+
+    def __str__(self):
+        return self.payment_to
+
+    class Meta:
+        db_table = 'post_payment'
+        ordering = ['payment_by', 'payment_to']

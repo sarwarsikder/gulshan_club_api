@@ -44,6 +44,10 @@ from re import search
 from PIL import Image
 from api.service.city_bank_service import PaymentsCityBank
 
+import requests
+import uuid
+
+
 
 
 
@@ -431,45 +435,218 @@ class UserList(viewsets.ModelViewSet):
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
 
-    @action(detail=False, methods=['post'], url_path='pay-city-bank')
-    def  user_upload(self, request):
+    # @action(detail=False, methods=['post'], url_path='pay-city-bank')
+    # def  payment_city_bank(self, request):
+    #     try:
+    #         if request.user.is_authenticated:
+    #                 if request.method == 'POST':
+    #                     print(request.POST['amount'])
+
+    #                     amount = str(request.POST['amount'])
+    #                     reference_number = str(request.POST['reference'])
+
+    #                     if not amount:
+    #                         message = 'Write valid ammount'
+    #                         return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+    #                     proxy =""
+    #                     proxyauth =""
+    #                     postDatatoken = '{"password": "123456Aa","userName": "test"}'
+    #                     serviceUrltoken =""
+    #                     serviceUrltoken= 'https://sandbox.thecitybank.com:7788/transaction/token'
+    #                     cblcz = PaymentsCityBank(postDatatoken,serviceUrltoken,proxy,proxyauth)
+                        
+    #                     transaction = cblcz.executePayment()    
+    #                     transaction_json = json.loads(transaction)
+                        
+    #                     transactionId = transaction_json['transactionId']
+                        
+    #                     declined = settings.BASE_URL+"api/v1/users/city-declined/"
+    #                     approved = settings.BASE_URL+"api/v1/users/city-approved/"
+    #                     cancelled = settings.BASE_URL+"api/v1/users/city-cancelled/"
+                    
+    #                     postdataEcomm = '{"merchantId": "11122333","amount": "'+amount+'","currency": "050","description": "'+reference_number+'","approveUrl": "'+approved+'","cancelUrl": "'+cancelled+'","declineUrl": "'+declined+'","userName": "test","passWord": "123456Aa","secureToken": "'+ transactionId +'"}'
+    #                     serviceUrlEcomm = 'https://sandbox.thecitybank.com:7788/transaction/createorder'
+                        
+    #                     cblEcomm = PaymentsCityBank(postdataEcomm,serviceUrlEcomm,proxy,proxyauth)
+    #                     cblEcomm = cblEcomm.executePayment()    
+    #                     cblEcomm_json = json.loads(cblEcomm)
+
+    #                     orderId = cblEcomm_json['items']['orderId']
+    #                     sessionId = cblEcomm_json['items']['sessionId']
+    #                     url = cblEcomm_json['items']['url']
+
+    #                     redirectUrl = url+"?ORDERID="+orderId+"&SESSIONID="+sessionId
+    #                     return JsonResponse({'status': True, 'pay_url': redirectUrl}, status=HTTPStatus.OK)
+
+    #                 else:
+    #                         message = 'method not alloed!'
+    #                         return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+    #     except Exception as e:
+    #         message = "Something went wrong." + str(e)
+    #         print(str(e))
+    #         return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        
+    @action(detail=False, methods=['get'], url_path='city-declined')
+    def city_on_declined(self, request):
+        try:
+            if request.user.is_authenticated:
+                return JsonResponse({'status': True, 'message': 'Your payment has been declined.'}, status=HTTPStatus.OK)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        
+    @action(detail=False, methods=['get'], url_path='city-approved')
+    def city_on_approved(self, request):
+        try:
+            if request.user.is_authenticated:
+                return JsonResponse({'status': True, 'message': 'Thanks for payment,You payment has been approved.'}, status=HTTPStatus.OK)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+    
+    @action(detail=False, methods=['get'], url_path='city-cancelled')
+    def city_on_cancelled(self, request):
+        try:
+            if request.user.is_authenticated:
+                return JsonResponse({'status': True, 'message': 'Your payment has been cancelled.'}, status=HTTPStatus.OK)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong."
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        
+        
+    @action(detail=False, methods=['post'], url_path='bkash-createpayment')
+    def  bkash_create_payment(self, request):
         try:
             if request.user.is_authenticated:
                     if request.method == 'POST':
-                        print(request.POST['amount'])
+                
+                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/token/grant'
+                        data = {
+                            'app_key': '5tunt4masn6pv2hnvte1sb5n3j', 
+                            'app_secret': '1vggbqd4hqk9g96o9rrrp2jftvek578v7d2bnerim12a87dbrrka'
+                            }
+                        headers = {
+                            'Content-type': 'application/json', 
+                            'Accept': 'application/json',
+                            'username': 'sandboxTestUser',
+                            'password': 'hWD@8vtzw0'
+                            }
+                        r_token = requests.post(url, data=json.dumps(data), headers=headers)
 
-                        amount = str(request.POST['amount'])
-                        reference_number = str(request.POST['reference'])
+                        response_data_token = json.loads(r_token.text)
+                        id_token_str = str(response_data_token['id_token'])
+                        id_token = response_data_token['id_token']
 
-                        if not amount:
-                            message = 'Write valid ammount'
+                        #print(response_data_token)
+
+
+
+                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/create'
+                        data_checkout = {
+                            'mode': '0011',
+                            'payerReference' : '01712546965',
+                            'callbackURL' : 'www.google.com',
+                            'amount': "2",
+                            'currency': "BDT",
+                            'intent': "sale",
+                            'merchantInvoiceNumber': str(uuid.uuid4()),
+
+                            }
+
+                        headers_checkout= {
+                            "Content-Type": "application/json", 
+                            "Accept": "application/json",
+                            "authorization": id_token,
+                            "x-app-key": "5tunt4masn6pv2hnvte1sb5n3j"
+                            }
+
+                        r_checkout = requests.post(url, data=json.dumps(data_checkout), headers=headers_checkout)
+
+                        #print(headers_checkout)
+
+                        response_data_checkout = json.loads(r_checkout.text)
+                        #print(response_data_checkout)
+                        paymentID = response_data_checkout['paymentID']
+                        
+
+                        return JsonResponse(response_data_checkout, status=HTTPStatus.OK)
+
+                    else:
+                            message = 'method not alloed!'
                             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
-                        proxy =""
-                        proxyauth =""
-                        postDatatoken = '{"password": "123456Aa","userName": "test"}'
-                        serviceUrltoken =""
-                        serviceUrltoken= 'https://sandbox.thecitybank.com:7788/transaction/token'
-                        cblcz = PaymentsCityBank(postDatatoken,serviceUrltoken,proxy,proxyauth)
+        except Exception as e:
+            message = "Something went wrong." + str(e)
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        
+        
+        
+    @action(detail=False, methods=['post'], url_path='bkash-execution')
+    def  bkash_execution_payments(self, request):
+        try:
+            if request.user.is_authenticated:
+                    if request.method == 'POST':
                         
-                        transaction = cblcz.executePayment()    
-                        transaction_json = json.loads(transaction)
+                        print("TEST")
+                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/token/grant'
+                        data = {
+                            'app_key': '5tunt4masn6pv2hnvte1sb5n3j', 
+                            'app_secret': '1vggbqd4hqk9g96o9rrrp2jftvek578v7d2bnerim12a87dbrrka'
+                            }
+                        headers = {
+                            'Content-type': 'application/json', 
+                            'Accept': 'application/json',
+                            'username': 'sandboxTestUser',
+                            'password': 'hWD@8vtzw0'
+                            }
+                        r_token = requests.post(url, data=json.dumps(data), headers=headers)
+
+                        response_data_token = json.loads(r_token.text)
+                        id_token_str = str(response_data_token['id_token'])
+                        id_token = response_data_token['id_token']
                         
-                        transactionId = transaction_json['transactionId']
+                        # json_data = json.loads(request.body)
+                        
+                        # paymentID = json_data['paymentID']
+                        paymentID = str(request.POST['paymentID'])
+                
+                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/execute/' + paymentID
+
+                        #print(url)
+                        #print(id_token)
+
+                        headers = {
+                            'Accept': 'application/json',
+                            'authorization': id_token,
+                            'x-app-key': '5tunt4masn6pv2hnvte1sb5n3j'
+                            }
+
+                        data = {
+                            "paymentID": paymentID
+                            }
+
+                        response_data = requests.post(url, data=json.dumps(data), headers=headers)
+                        print(response_data)
+
+                        r_data = json.loads(response_data.text)
+                        return JsonResponse(r_data, status=HTTPStatus.OK)
                     
-                        postdataEcomm = '{"merchantId": "11122333","amount": "'+amount+'","currency": "050","description": "'+reference_number+'","approveUrl": "http://192.168.220.43:8080/CityBankPHP_1.0.1/Approved.php","cancelUrl": "http://192.168.220.43:8080/CityBankPHP_1.0.1/Cancelled.php","declineUrl": "http://192.168.220.43:8080/CityBankPHP_1.0.1/Declined.php","userName": "test","passWord": "123456Aa","secureToken": "'+ transactionId +'"}'
-                        serviceUrlEcomm = 'https://sandbox.thecitybank.com:7788/transaction/createorder'
-                        cblEcomm = PaymentsCityBank(postdataEcomm,serviceUrlEcomm,proxy,proxyauth)
-                        cblEcomm = cblEcomm.executePayment()    
-                        cblEcomm_json = json.loads(cblEcomm)
-
-                        orderId = cblEcomm_json['items']['orderId']
-                        sessionId = cblEcomm_json['items']['sessionId']
-                        url = cblEcomm_json['items']['url']
-
-                        redirectUrl = url+"?ORDERID="+orderId+"&SESSIONID="+sessionId
-                        return JsonResponse({'status': True, 'pay_url': redirectUrl}, status=HTTPStatus.OK)
-
+                    
                     else:
                             message = 'method not alloed!'
                             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
