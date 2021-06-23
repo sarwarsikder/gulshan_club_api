@@ -97,6 +97,7 @@ def city_on_approved(request):
             if request.method == 'POST':
                 element = xmltodict.parse(request.data['xmlmsg'])
                 tans_data = json.dumps(element)
+                return HttpResponse("Thanks for payment,You payment has been approved.")
                 return JsonResponse({'status': True, 'message': 'Thanks for payment,You payment has been approved.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
@@ -108,6 +109,7 @@ def city_on_cancelled(request):
             if request.method == 'POST':
                 element = xmltodict.parse(request.data['xmlmsg'])
                 tans_data = json.dumps(element)
+                return HttpResponse("Your payment has been cancelled.")
                 return JsonResponse({'status': True, 'message': 'Your payment has been cancelled.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
