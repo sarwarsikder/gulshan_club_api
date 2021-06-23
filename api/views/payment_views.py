@@ -10,10 +10,11 @@ from api.models import PostPayment
 from api.serializer.payment_serializers import PaymentSerializer
 from django.contrib.auth import get_user_model
 User = get_user_model()
-
-
+from django.core.paginator import Paginator
 
 from api.service.city_bank_service import PaymentsCityBank
+from api.service import paginator_service
+
 
 import os
 from django.conf import settings
@@ -149,14 +150,23 @@ def bkash_post_payment(request):
 def payment_statement(request):
         try:
             if request.user.is_authenticated:
-                user_payment_filter = PostPayment.objects.filter(payment_to = request.user)
-                user_payment = PaymentSerializer(user_payment_filter, many=True).data
+                payment_list = PostPayment.objects.filter(payment_to = request.user)
                 
+                results = []
+                paginator = Paginator(payment_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    payment_list = paginator.page(page)
+                except PageNotAnInteger:
+                    payment_list = paginator.page(1)
+                except EmptyPage:
+                    payment_list = paginator.page(paginator.num_pages)
+
+                user_payment_filter = PaymentSerializer(payment_list, many=True).data
+                results.append(user_payment_filter)
                 message = "Payment statement fetch successfully."
-                return JsonResponse({'status': True, 'message' : message,  'data': user_payment}, status=HTTPStatus.OK)
-            else:
-                message = "Please valid User."
-                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+                return paginator_service.response_paginated(payment_list, user_payment_filter, request)
         except Exception as e:
             message = "Something went wrong." + str(e)
             print(str(e))
