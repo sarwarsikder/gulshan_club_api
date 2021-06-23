@@ -25,7 +25,7 @@ SECRET_KEY = 'nrv)09@xgbzgkea1x*9*8yb8-c5c8=mdx7=d-1gvl0#(+h@r_o'
 DEBUG = True
 
 AUTH_USER_MODEL = 'api.CustomUser'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com','http://localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','58.84.34.65', '.herokuapp.com','http://localhost']
 # ALLOWED_HOSTS = ['*']
 # Application definition
 
@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        # 'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 24
