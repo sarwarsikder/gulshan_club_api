@@ -83,6 +83,7 @@ def city_on_declined(request):
                 element = xmltodict.parse(request.data['xmlmsg'])
                 tans_data = json.loads(json.dumps(element)) 
                 print(json.dumps(element))
+                return "Your payment has been declined."
                 return JsonResponse({'status': True, 'message': 'Your payment has been declined.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
