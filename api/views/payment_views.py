@@ -5,6 +5,8 @@ from rest_framework import generics, permissions
 from rest_framework.decorators import action, permission_classes, api_view
 from django.http import JsonResponse
 from http import HTTPStatus
+from django.http import HttpResponse
+
 
 from api.models import PostPayment
 from api.serializer.payment_serializers import PaymentSerializer
@@ -83,7 +85,7 @@ def city_on_declined(request):
                 element = xmltodict.parse(request.data['xmlmsg'])
                 tans_data = json.loads(json.dumps(element)) 
                 print(json.dumps(element))
-                return "Your payment has been declined."
+                return HttpResponse("Your payment has been declined.")
                 return JsonResponse({'status': True, 'message': 'Your payment has been declined.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
