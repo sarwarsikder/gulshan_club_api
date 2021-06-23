@@ -114,6 +114,8 @@ def bkash_post_payment(request):
                 json_data = json.dumps(request.data)
                 body_data = json.loads(json_data)
                 
+                user_id = body_data['user_id']
+                
                 postPayment = PostPayment()
                 postPayment.payment_by = request.user
                 postPayment.payment_to = request.user
