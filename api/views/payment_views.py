@@ -7,6 +7,10 @@ from django.http import JsonResponse
 from http import HTTPStatus
 
 from api.models import PostPayment
+from api.serializer.payment_serializers import PaymentSerializer
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 
 from api.service.city_bank_service import PaymentsCityBank
@@ -115,10 +119,13 @@ def bkash_post_payment(request):
                 body_data = json.loads(json_data)
                 
                 user_id = body_data['user_id']
+                pay_to = User.objects.get(id=user_id)
+                
+                print(request.user)
                 
                 postPayment = PostPayment()
                 postPayment.payment_by = request.user
-                postPayment.payment_to = request.user
+                postPayment.payment_to = pay_to
                 postPayment.payment_id =  body_data['paymentID']
                 postPayment.trx_id = body_data['trxID']
                 postPayment.amount = body_data['amount']
@@ -131,6 +138,23 @@ def bkash_post_payment(request):
                 message = "Payment successfully added."
                 
                 return JsonResponse({'status': True, 'message' : message,  'data': json.loads(json_data)}, status=HTTPStatus.OK)
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+        except Exception as e:
+            message = "Something went wrong." + str(e)
+            print(str(e))
+            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+
+@api_view(['GET'])
+def payment_statement(request):
+        try:
+            if request.user.is_authenticated:
+                user_payment_filter = PostPayment.objects.filter(payment_to = request.user)
+                user_payment = PaymentSerializer(user_payment_filter, many=True).data
+                
+                message = "Payment statement fetch successfully."
+                return JsonResponse({'status': True, 'message' : message,  'data': user_payment}, status=HTTPStatus.OK)
             else:
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
