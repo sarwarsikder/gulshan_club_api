@@ -17,7 +17,9 @@ from api.service.city_bank_service import PaymentsCityBank
 
 import os
 from django.conf import settings
-import json
+import json, xmltodict
+import  xml.etree 
+
 
 @api_view(['POST'])
 def  city_bank_payment(request):
@@ -45,9 +47,9 @@ def  city_bank_payment(request):
                         
                         transactionId = transaction_json['transactionId']
                         
-                        declined = settings.BASE_URL+"api/v1/users/city-declined/"
-                        approved = settings.BASE_URL+"api/v1/users/city-approved/"
-                        cancelled = settings.BASE_URL+"api/v1/users/city-cancelled/"
+                        declined = settings.BASE_URL+"api/v1/payments/city-declined/"
+                        approved = settings.BASE_URL+"api/v1/payments/city-approved/"
+                        cancelled = settings.BASE_URL+"api/v1/payments/city-cancelled/"
                     
                         postdataEcomm = '{"merchantId": "11122333","amount": "'+amount+'","currency": "050","description": "'+reference_number+'","approveUrl": "'+approved+'","cancelUrl": "'+cancelled+'","declineUrl": "'+declined+'","userName": "test","passWord": "123456Aa","secureToken": "'+ transactionId +'"}'
                         serviceUrlEcomm = 'https://sandbox.thecitybank.com:7788/transaction/createorder'
@@ -72,40 +74,37 @@ def  city_bank_payment(request):
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
         
-@api_view(['GET'])
+@api_view(['POST'])
 def city_on_declined(request):
         try:
-            if request.user.is_authenticated:
-                return JsonResponse({'status': True, 'message': 'Your payment has been declined.'}, status=HTTPStatus.OK)
-            else:
-                message = "Please valid User."
-                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+            if request.method == 'POST':
+                print(request.data)
+                element = xmltodict.parse(request.data['xmlmsg'])
+                tans_data = json.loads(json.dumps(element)) 
+                print(json.dumps(element))
+                return JsonResponse({'status': True, 'message': 'Your payment has been declined.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
-            print(str(e))
-            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+            return JsonResponse({'status': True, 'message': message}, status=HTTPStatus.EXPECTATION_FAILED)
         
-@api_view(['GET'])
+@api_view(['POST'])
 def city_on_approved(request):
         try:
-            if request.user.is_authenticated:
-                return JsonResponse({'status': True, 'message': 'Thanks for payment,You payment has been approved.'}, status=HTTPStatus.OK)
-            else:
-                message = "Please valid User."
-                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+            if request.method == 'POST':
+                element = xmltodict.parse(request.data['xmlmsg'])
+                tans_data = json.dumps(element)
+                return JsonResponse({'status': True, 'message': 'Thanks for payment,You payment has been approved.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
-            print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def city_on_cancelled(request):
         try:
-            if request.user.is_authenticated:
-                return JsonResponse({'status': True, 'message': 'Your payment has been cancelled.'}, status=HTTPStatus.OK)
-            else:
-                message = "Please valid User."
-                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+            if request.method == 'POST':
+                element = xmltodict.parse(request.data['xmlmsg'])
+                tans_data = json.dumps(element)
+                return JsonResponse({'status': True, 'message': 'Your payment has been cancelled.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
             message = "Something went wrong."
             print(str(e))

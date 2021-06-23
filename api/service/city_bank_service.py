@@ -15,7 +15,6 @@ class PaymentsCityBank():
     
     def executePayment(self):
         try:
-            print('TEST... ')
             b_obj = BytesIO()
             crl = pycurl.Curl() 
             module_dir = os.path.dirname(__file__)
