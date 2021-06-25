@@ -84,8 +84,32 @@ def city_on_declined(request):
             if request.method == 'POST':
                 print(request.data)
                 element = xmltodict.parse(request.data['xmlmsg'])
-                tans_data = json.loads(json.dumps(element)) 
-                print(json.dumps(element))
+                tans_data = json.loads(json.dumps(element))
+                tans_data = tans_data['Message']
+                            
+                OrderDescription = str(tans_data['OrderDescription'])
+                user = OrderDescription.split("#")
+                
+                payment_by_id =user[0]
+                payment_to_id =user[1]
+                payment_by = User.objects.get(id=payment_by_id) 
+                pay_to = User.objects.get(id=payment_to_id) 
+                
+                
+                
+                postPayment = PostPayment()
+                postPayment.payment_by = payment_by
+                postPayment.payment_to = pay_to
+                postPayment.payment_id =  tans_data['SessionID']
+                postPayment.trx_id = tans_data['SessionID']
+                postPayment.amount = tans_data['TotalAmountScr']
+                postPayment.currency = tans_data['CurrencyISOAlpha']
+                postPayment.payment_type = tans_data['Brand']
+                postPayment.merchant_invoice = tans_data['SessionID']
+                postPayment.transaction_status = tans_data['OrderStatus']
+                postPayment.save()
+                
+                
                 return HttpResponse("Your payment has been declined.")
                 return JsonResponse({'status': True, 'message': 'Your payment has been declined.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
@@ -96,8 +120,32 @@ def city_on_declined(request):
 def city_on_approved(request):
         try:
             if request.method == 'POST':
+                print(request.data)
                 element = xmltodict.parse(request.data['xmlmsg'])
-                tans_data = json.dumps(element)
+                tans_data = json.loads(json.dumps(element))
+                tans_data = tans_data['Message']
+                            
+                OrderDescription = str(tans_data['OrderDescription'])
+                user = OrderDescription.split("#")
+                
+                payment_by_id =user[0]
+                payment_to_id =user[1]
+                payment_by = User.objects.get(id=payment_by_id) 
+                pay_to = User.objects.get(id=payment_to_id) 
+                
+                
+                
+                postPayment = PostPayment()
+                postPayment.payment_by = payment_by
+                postPayment.payment_to = pay_to
+                postPayment.payment_id =  tans_data['SessionID']
+                postPayment.trx_id = tans_data['SessionID']
+                postPayment.amount = tans_data['TotalAmountScr']
+                postPayment.currency = tans_data['CurrencyISOAlpha']
+                postPayment.payment_type = tans_data['Brand']
+                postPayment.merchant_invoice = tans_data['SessionID']
+                postPayment.transaction_status = tans_data['OrderStatus']
+                postPayment.save()
                 return HttpResponse("Thanks for payment,You payment has been approved.")
                 return JsonResponse({'status': True, 'message': 'Thanks for payment,You payment has been approved.', 'data': tans_data}, status=HTTPStatus.OK)
         except Exception as e:
