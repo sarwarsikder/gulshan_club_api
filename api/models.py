@@ -347,7 +347,7 @@ class PostPayment(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)
 
     def __str__(self):
-        return self.payment_to
+        return self.trx_id
 
     class Meta:
         db_table = 'post_payment'
