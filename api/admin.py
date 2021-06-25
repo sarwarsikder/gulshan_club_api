@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import NoticeBoard, Event, MessageUser, UserCategory, CustomUser, StuffUser, ClubFacility, \
-    ClubFacilityDetail
+    ClubFacilityDetail , PostPayment
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from import_export.admin import ImportExportModelAdmin
 
@@ -121,4 +121,8 @@ class ClubFacilityAdmin(admin.ModelAdmin):
 
 @admin.register(ClubFacilityDetail)
 class ClubFacilityDetailAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(PostPayment)
+class PostPaymentAdmin(admin.ModelAdmin):
     pass

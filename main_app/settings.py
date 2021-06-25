@@ -178,5 +178,5 @@ MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'media')
 )
 
-# BASE_URL = 'http://58.84.34.65:9090'
-BASE_URL = 'http://localhost:8000'
+BASE_URL = 'http://58.84.34.65:9090'
+BASE_URL = 'http://localhost:8000/'
