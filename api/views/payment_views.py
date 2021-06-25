@@ -53,9 +53,9 @@ def  city_bank_payment(request):
                         
                         transactionId = transaction_json['transactionId']
                         
-                        declined = settings.BASE_URL+"api/v1/payments/city-declined/"
-                        approved = settings.BASE_URL+"api/v1/payments/city-approved/"
-                        cancelled = settings.BASE_URL+"api/v1/payments/city-cancelled/"
+                        declined = settings.BASE_URL+"/api/v1/payments/city-declined/"
+                        approved = settings.BASE_URL+"/api/v1/payments/city-approved/"
+                        cancelled = settings.BASE_URL+"/api/v1/payments/city-cancelled/"
                     
                         postdataEcomm = '{"merchantId": "11122333","amount": "'+amount+'","currency": "050","description": "'+reference_number+'","approveUrl": "'+approved+'","cancelUrl": "'+cancelled+'","declineUrl": "'+declined+'","userName": "test","passWord": "123456Aa","secureToken": "'+ transactionId +'"}'
                         serviceUrlEcomm = 'https://sandbox.thecitybank.com:7788/transaction/createorder'
