@@ -33,12 +33,13 @@ def  city_bank_payment(request):
                     if request.method == 'POST':
                         print(request.POST['amount'])
 
-                        amount = str(request.POST['amount'])
+                        amount = int(request.POST['amount']) * 100
                         reference_number = str(request.POST['reference'])
 
                         if not amount:
                             message = 'Write valid ammount'
                             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+                        amount = str(amount)
 
                         proxy =""
                         proxyauth =""
@@ -69,11 +70,9 @@ def  city_bank_payment(request):
 
                         redirectUrl = url+"?ORDERID="+orderId+"&SESSIONID="+sessionId
                         return JsonResponse({'status': True, 'pay_url': redirectUrl}, status=HTTPStatus.OK)
-
-                    else:
-                            message = 'method not alloed!'
-                            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
-
+            else:
+                message = "Please valid User."
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
         except Exception as e:
             message = "Something went wrong." + str(e)
             print(str(e))
