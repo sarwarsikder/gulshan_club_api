@@ -2,10 +2,12 @@
 from rest_framework import viewsets, filters
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from rest_framework import generics, permissions
-from rest_framework.decorators import action, permission_classes, api_view
+from rest_framework.decorators import action, permission_classes, api_view, authentication_classes
 from django.http import JsonResponse
 from http import HTTPStatus
 from django.http import HttpResponse
+from django.db.models import Q
+
 
 
 from api.models import PostPayment
@@ -20,7 +22,7 @@ from api.service import paginator_service
 
 import os
 from django.conf import settings
-import json, xmltodict
+import json, xmltodict, requests, uuid
 import  xml.etree 
 
 
@@ -155,7 +157,7 @@ def bkash_post_payment(request):
 def payment_statement(request):
         try:
             if request.user.is_authenticated:
-                payment_list = PostPayment.objects.filter(payment_to = request.user)
+                payment_list = PostPayment.objects.filter(Q(payment_by=request.user) | Q(payment_to=request.user)).order_by('-id')
                 
                 results = []
                 paginator = Paginator(payment_list, 10)
@@ -172,6 +174,9 @@ def payment_statement(request):
                 message = "Payment statement fetch successfully."
 
                 return paginator_service.response_paginated(payment_list, user_payment_filter, request)
+            else:
+                message = "User not valid!"
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
         except Exception as e:
             message = "Something went wrong." + str(e)
             print(str(e))
@@ -183,31 +188,26 @@ def payment_statement(request):
 def  bkash_create_payment(request):
         try:
             if request.user.is_authenticated:
-                    if request.method == 'POST':
-                
-                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/token/grant'
-                        data = {
+                if request.method == 'POST':
+                    url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/token/grant'
+                    data = {
                             'app_key': '5tunt4masn6pv2hnvte1sb5n3j', 
                             'app_secret': '1vggbqd4hqk9g96o9rrrp2jftvek578v7d2bnerim12a87dbrrka'
                             }
-                        headers = {
+                    headers = {
                             'Content-type': 'application/json', 
                             'Accept': 'application/json',
                             'username': 'sandboxTestUser',
                             'password': 'hWD@8vtzw0'
                             }
-                        r_token = requests.post(url, data=json.dumps(data), headers=headers)
+                    r_token = requests.post(url, data=json.dumps(data), headers=headers)
 
-                        response_data_token = json.loads(r_token.text)
-                        id_token_str = str(response_data_token['id_token'])
-                        id_token = response_data_token['id_token']
+                    response_data_token = json.loads(r_token.text)
+                    id_token_str = str(response_data_token['id_token'])
+                    id_token = response_data_token['id_token']
 
-                        #print(response_data_token)
-
-
-
-                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/create'
-                        data_checkout = {
+                    url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/create'
+                    data_checkout = {
                             'mode': '0011',
                             'payerReference' : '01712546965',
                             'callbackURL' : 'www.google.com',
@@ -216,72 +216,40 @@ def  bkash_create_payment(request):
                             'intent': "sale",
                             'merchantInvoiceNumber': str(uuid.uuid4()),
 
-                            }
+                            }   
 
-                        headers_checkout= {
+                    headers_checkout= {
                             "Content-Type": "application/json", 
                             "Accept": "application/json",
                             "authorization": id_token,
                             "x-app-key": "5tunt4masn6pv2hnvte1sb5n3j"
                             }
 
-                        r_checkout = requests.post(url, data=json.dumps(data_checkout), headers=headers_checkout)
-
-                        #print(headers_checkout)
-
-                        response_data_checkout = json.loads(r_checkout.text)
-                        #print(response_data_checkout)
-                        paymentID = response_data_checkout['paymentID']
-                        
-
-                        return JsonResponse(response_data_checkout, status=HTTPStatus.OK)
-
-                    else:
-                            message = 'method not alloed!'
-                            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
-
+                    r_checkout = requests.post(url, data=json.dumps(data_checkout), headers=headers_checkout)
+                    response_data_checkout = json.loads(r_checkout.text)
+                    response_data_checkout["token_id"] = id_token_str
+                    #print(response_data_checkout)
+                    paymentID = response_data_checkout['paymentID']
+                    return JsonResponse({'data': response_data_checkout}, status=HTTPStatus.OK)
+            else:
+                message = "User not valid!"
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
         except Exception as e:
             message = "Something went wrong." + str(e)
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
 @api_view(['POST'])
-def  bkash_execution_payments(request):
+def  bkash_execution_payment(request):
         try:
             if request.user.is_authenticated:
                     if request.method == 'POST':
-                        
-                        print("TEST")
-                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/token/grant'
-                        data = {
-                            'app_key': '5tunt4masn6pv2hnvte1sb5n3j', 
-                            'app_secret': '1vggbqd4hqk9g96o9rrrp2jftvek578v7d2bnerim12a87dbrrka'
-                            }
-                        headers = {
-                            'Content-type': 'application/json', 
-                            'Accept': 'application/json',
-                            'username': 'sandboxTestUser',
-                            'password': 'hWD@8vtzw0'
-                            }
-                        r_token = requests.post(url, data=json.dumps(data), headers=headers)
-
-                        response_data_token = json.loads(r_token.text)
-                        id_token_str = str(response_data_token['id_token'])
-                        id_token = response_data_token['id_token']
-                        
-                        # json_data = json.loads(request.body)
-                        
-                        # paymentID = json_data['paymentID']
                         paymentID = str(request.POST['paymentID'])
-                
-                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/execute/' + paymentID
-
-                        #print(url)
-                        #print(id_token)
-
+                        bkash_id_token = str(request.POST['bkash_id_token'])
+                        url = 'https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/execute/'
                         headers = {
                             'Accept': 'application/json',
-                            'authorization': id_token,
+                            'authorization': bkash_id_token,
                             'x-app-key': '5tunt4masn6pv2hnvte1sb5n3j'
                             }
 
@@ -294,15 +262,11 @@ def  bkash_execution_payments(request):
 
                         r_data = json.loads(response_data.text)
                         return JsonResponse(r_data, status=HTTPStatus.OK)
-                    
-                    
-                    else:
-                            message = 'method not alloed!'
-                            return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
-
+            else:
+                message = "User not valid!"
+                return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
+                
         except Exception as e:
             message = "Something went wrong." + str(e)
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
-                    
-
