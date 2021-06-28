@@ -25,6 +25,9 @@ from django.conf import settings
 import json, xmltodict, requests, uuid
 import  xml.etree 
 
+pay_by = 0  
+pay_to = 0  
+
 
 @api_view(['POST'])
 def  city_bank_payment(request):
@@ -35,7 +38,12 @@ def  city_bank_payment(request):
                         reference_number = str(request.POST['reference'])
                         reference = reference_number.split("#")
                         reference_number = reference[2]
-
+                        
+                        global pay_by
+                        pay_by = reference[0]
+                        global pay_to
+                        pay_to = reference[1]
+                        
                         if not amount:
                             message = 'Write valid ammount'
                             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
@@ -83,19 +91,23 @@ def city_on_declined(request):
         try:
             if request.method == 'POST':
                 print(request.data)
+                global pay_by
+                global pay_to
+
+                payment_by_id = int(pay_by)
+                payment_to_id = int(pay_to)
+
                 element = xmltodict.parse(request.data['xmlmsg'])
                 tans_data = json.loads(json.dumps(element))
                 tans_data = tans_data['Message']
                             
                 OrderDescription = str(tans_data['OrderDescription'])
-                user = OrderDescription.split("#")
                 
-                payment_by_id =user[0]
-                payment_to_id =user[1]
                 payment_by = User.objects.get(id=payment_by_id) 
                 pay_to = User.objects.get(id=payment_to_id) 
+
                 
-                
+                              
                 
                 postPayment = PostPayment()
                 postPayment.payment_by = payment_by
@@ -121,15 +133,18 @@ def city_on_approved(request):
         try:
             if request.method == 'POST':
                 print(request.data)
+                global pay_by
+                global pay_to
+
+                payment_by_id = int(pay_by)
+                payment_to_id = int(pay_to)
+
                 element = xmltodict.parse(request.data['xmlmsg'])
                 tans_data = json.loads(json.dumps(element))
                 tans_data = tans_data['Message']
                             
                 OrderDescription = str(tans_data['OrderDescription'])
-                user = OrderDescription.split("#")
                 
-                payment_by_id =user[0]
-                payment_to_id =user[1]
                 payment_by = User.objects.get(id=payment_by_id) 
                 pay_to = User.objects.get(id=payment_to_id) 
                 
