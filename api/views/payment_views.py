@@ -34,7 +34,7 @@ def  city_bank_payment(request):
                         amount = int(request.POST['amount']) * 100
                         reference_number = str(request.POST['reference'])
                         reference = reference_number.split("#")
-                        reference_number = eference[3]
+                        reference_number = reference[2]
 
                         if not amount:
                             message = 'Write valid ammount'
