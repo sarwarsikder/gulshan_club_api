@@ -142,7 +142,8 @@ REST_FRAMEWORK = {
 
 SMS_CONFIG = {
 	"username" : 'GulshanClub', # Please add your own username
-	"password" : '62?3B04y', # Please add your own password
+	#"password" : '62?3B04y', # Please add your own password
+	"password" : 'Z@kimpur1978', # Please add your own password
 	"sid" : 'GCLeng', # Please add your own SID
 }
 

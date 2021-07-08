@@ -242,7 +242,7 @@ class UserList(viewsets.ModelViewSet):
                 response = smsWireless.sendSMSWithGet()
 
                 sms_obj = xmltodict.parse(response)
-                print(phone)
+                print(sms_obj)
 
                 if phone == '01713523713':
                     sms_obj = {
