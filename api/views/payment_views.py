@@ -24,6 +24,10 @@ import os
 from django.conf import settings
 import json, xmltodict, requests, uuid
 import  xml.etree 
+import datetime
+from datetime import date
+
+
 
 pay_by = 0  
 pay_to = 0  
@@ -219,7 +223,24 @@ def bkash_post_payment(request):
 def payment_statement(request):
         try:
             if request.user.is_authenticated:
-                payment_list = PostPayment.objects.filter(Q(payment_by=request.user) | Q(payment_to=request.user)).order_by('-id')
+                start_date = ''
+                end_date = ''
+                date_filter = ''
+                print(request)
+                if request.GET.get('start_date') and request.GET.get('end_date'):
+                    start_date = request.GET.get('start_date')
+                    end_date = request.GET.get('end_date')
+                    now = date(*map(int, start_date.split('-')))
+                    print("TEST")
+                    print(now)
+                    #date_filter = Q(created_at__range=(start_date, end_date))
+                    date_filter = Q(created_at__gte=start_date, created_at__lte=end_date)
+                    print(date_filter)
+                    payment_list = PostPayment.objects.filter(Q(payment_by=request.user) | Q(payment_to=request.user)).filter(date_filter).order_by('-id')
+                else:
+                    payment_list = PostPayment.objects.filter(Q(payment_by=request.user) | Q(payment_to=request.user)).order_by('-id')
+
+                print(date_filter)
                 
                 results = []
                 paginator = Paginator(payment_list, 10)
