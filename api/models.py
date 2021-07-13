@@ -352,3 +352,17 @@ class PostPayment(models.Model):
     class Meta:
         db_table = 'post_payment'
         ordering = ['payment_by', 'payment_to']
+        
+class ContactUs(models.Model):
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=250, blank=True)
+    account_number = models.CharField(max_length=25, blank=True)
+    message = models.CharField(max_length=1000, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True, editable=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'contact_us'

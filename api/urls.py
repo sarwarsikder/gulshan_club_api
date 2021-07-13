@@ -10,6 +10,7 @@ from api.views.user_stuff_views import UserStuffList
 from api.views.user_views import UserList, GroupList, UserByUsernameList
 from api.views.views import StoreManager
 from api.views import payment_views
+from api.views import contact_us_views
 
 router = routers.DefaultRouter()
 router.register(r'opt_operation', UserByUsernameList)
@@ -46,6 +47,9 @@ urlpatterns = [
     path('payments/bkash-execution-payment/',
          payment_views.bkash_execution_payment,
          name = 'bkash-execution-payment'),
+    path('contact-us/create-request/',
+         contact_us_views.contact_request,
+         name = 'contact-request'),
     path('groups/', GroupList.as_view()),
     path('events/(?P<year>.+)/$', EventList.as_view()),
     path('events/', EventList.as_view()),
