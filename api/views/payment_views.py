@@ -25,7 +25,8 @@ from django.conf import settings
 import json, xmltodict, requests, uuid
 import  xml.etree 
 import datetime
-from datetime import date
+from datetime import date, datetime, timedelta
+
 
 
 
@@ -230,16 +231,13 @@ def payment_statement(request):
                 if request.GET.get('start_date') and request.GET.get('end_date'):
                     start_date = request.GET.get('start_date')
                     end_date = request.GET.get('end_date')
-                    now = date(*map(int, start_date.split('-')))
-                    print("TEST")
-                    print(now)
-                    #date_filter = Q(created_at__range=(start_date, end_date))
+                    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+                    end_date = datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)
                     date_filter = Q(created_at__gte=start_date, created_at__lte=end_date)
                     payment_list = PostPayment.objects.filter(Q(payment_by=request.user) | Q(payment_to=request.user)).filter(date_filter).order_by('-id')
                 else:
                     payment_list = PostPayment.objects.filter(Q(payment_by=request.user) | Q(payment_to=request.user)).order_by('-id')
 
-                print(date_filter)
                 
                 results = []
                 paginator = Paginator(payment_list, 10)
