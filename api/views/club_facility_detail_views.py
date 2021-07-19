@@ -8,11 +8,11 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, Token
 
 class ClubFacilityDeailsList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
-    queryset = ClubFacilityDetail.objects.all()
+    queryset = ClubFacilityDetail.objects.all().order_by('-id')
     serializer_class = ClubFacilityDetailSerializer
 
 
 class ClubFacilityDetailDetails(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
-    queryset = ClubFacilityDetail.objects.all()
+    queryset = ClubFacilityDetail.objects.all().order_by('-id')
     serializer_class = ClubFacilityDetailSerializer

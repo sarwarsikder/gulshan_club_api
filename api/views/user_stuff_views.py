@@ -24,7 +24,7 @@ class UserStuffList(viewsets.ModelViewSet):
             if request.user.is_authenticated:
                 user_filter = StuffUser.objects.filter(stuff_name__contains=request.GET.get('stuff_name')) | StuffUser.objects.filter(
                     designation__contains=request.GET.get('stuff_name')) |  StuffUser.objects.filter(
-                    designation_group__contains=request.GET.get('stuff_name'))
+                    designation_group__contains=request.GET.get('stuff_name')).order_by('-id')
 
                 user_data = UserStuffSerializer(user_filter, many=True).data
                 return JsonResponse(

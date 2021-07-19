@@ -75,6 +75,7 @@ class CustomUser(AbstractUser):
     category_name = models.ForeignKey(UserCategory, on_delete=models.DO_NOTHING, null=True, blank=True)
     designation = models.CharField(max_length=250, null=True, blank=True)
     membership_date = models.DateField(null=True, blank=True)
+    death_date = models.DateField(null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     marital_status = models.CharField(choices=material_types, max_length=50, null=True, blank=True)
     marriage_anniversary = models.DateField(null=True, blank=True)

@@ -15,6 +15,6 @@ class NoticeBoardSerializer(serializers.ModelSerializer):
             return '%s%s' % (settings.MEDIA_URL, obj.image_thumbnail)
     class Meta:
         model = NoticeBoard
-        ordering_fields = ['id', 'created_at']
-        ordering = ['created_at']
+        ordering_fields = ['id']
+        ordering = ['id']
         fields = ('id', 'title', 'message', 'tag', 'image_medium', 'image_thumbnail', 'created_at', 'updated_at')

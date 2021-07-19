@@ -16,7 +16,7 @@ class EventSerializer(serializers.ModelSerializer):
             return '%s%s' % (settings.MEDIA_URL, obj.image_thumbnail)
     class Meta:
         model = Event
-        ordering_fields = ['id', 'created']
+        ordering_fields = ['created']
         ordering = ['created']
         fields = ('id',
                   'name',

@@ -24,7 +24,7 @@ class EventList(generics.ListAPIView):
             print(start_year)
             end_year =  request.GET['year'] + '-12-31'
             print(end_year)
-            queryset = Event.objects.all().filter(start_date__range=[start_year,end_year])
+            queryset = Event.objects.all().filter(start_date__range=[start_year,end_year]).order_by('-id')
             serializer = EventSerializer(queryset, many=True)
             event_data = EventSerializer(queryset, many=True).data
         else:
@@ -49,5 +49,5 @@ class EventList(generics.ListAPIView):
 
 class EventDetails(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().order_by('-id')
     serializer_class = EventSerializer

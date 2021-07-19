@@ -8,6 +8,6 @@ class PaymentSerializer(serializers.ModelSerializer):
     payment_to = UserSerializer(read_only=True)
     class Meta:
         model = PostPayment
-        ordering_fields = ['id', 'created_at']
+        ordering_fields = ['created_at']
         ordering = ['created_at']
         fields = ('id','payment_by', 'payment_to', 'payment_id', 'trx_id', 'amount', 'currency', 'merchant_invoice', 'transaction_status', 'payment_type','created_at')

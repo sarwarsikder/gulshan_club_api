@@ -18,4 +18,6 @@ class UserStuffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StuffUser
+        ordering_fields = ['created_at']
+        ordering = ['created_at']
         fields = ('id','stuff_name', 'designation_group', "designation", "mobile_number_primary","image_medium","image_thumbnail")

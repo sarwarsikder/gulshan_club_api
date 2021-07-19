@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        ordering_fields = ['id', 'created_at']
+        ordering_fields = ['created_at']
         ordering = ['created_at']
         fields = ('id',
         'username', 

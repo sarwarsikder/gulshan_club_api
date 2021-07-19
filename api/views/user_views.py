@@ -87,7 +87,7 @@ class UserList(viewsets.ModelViewSet):
                     Q(club_ac_number__contains=search_string) |
                     Q(phone_primary__contains=search_string))
 
-                )
+                ).order_by('-id')
 
                 print(user_filter)
                 # user_data = UserSerializer(instance=user_filter, many=True).data
@@ -106,7 +106,7 @@ class UserList(viewsets.ModelViewSet):
     def active_user_search(self, request):
         try:
             if request.user.is_authenticated:
-                user_list = User.objects.all()
+                user_list = User.objects.all().order_by('-id')
                 search_string = request.GET.get('member_name')
                 # user_filter = User.objects.filter(
                 #     Q(first_name=search_string) | Q(last_name=search_string),
@@ -127,7 +127,7 @@ class UserList(viewsets.ModelViewSet):
                     Q(club_ac_number__contains=search_string) |
                     Q(phone_primary__contains=search_string))
 
-                )
+                ).order_by('-id')
                 # user_data = UserSerializer(instance=user_filter, many=True).data
                 user_data = UserSerializer(user_filter, many=True).data
                 return JsonResponse(
@@ -144,28 +144,22 @@ class UserList(viewsets.ModelViewSet):
     def inactive_user_search(self, request):
         try:
             if request.user.is_authenticated:
-                user_list = User.objects.all()
-                search_string = request.GET.get('member_name')
-                # user_filter = User.objects.filter(
-                #     Q(first_name=search_string) | Q(last_name=search_string),
-                # )
-                print('Inactive User')
-                # user_filter = User.objects.filter(
-                #     Q(is_active=False) & (Q(first_name__contains=search_string) |
-                #     Q(last_name__contains=search_string) |
-                #     Q(club_ac_number__contains=search_string) |
-                #     Q(phone_primary__contains=search_string))
+                user_list = User.objects.all().order_by('death_date')
+                
+                if request.GET.get('member_name'):
+                    search_string = request.GET.get('member_name')
+                    user_filter = User.objects.filter(
+                    Q(is_active=False) & (Q(first_name__contains=search_string) |
+                        Q(last_name__contains=search_string) |
+                        Q(username__contains=search_string) |
+                        Q(club_ac_number__contains=search_string) |
+                        Q(phone_primary__contains=search_string))
 
-                # )
-
-                user_filter = User.objects.filter(
-                   Q(is_active=False) & (Q(first_name__contains=search_string) |
-                    Q(last_name__contains=search_string) |
-                    Q(username__contains=search_string) |
-                    Q(club_ac_number__contains=search_string) |
-                    Q(phone_primary__contains=search_string))
-
-                )
+                    ).order_by('-id')
+                else:
+                    user_filter = User.objects.filter(
+                    Q(is_active=False)).order_by('death_date')
+                    
 
 
                 print(user_filter.query)
@@ -177,16 +171,16 @@ class UserList(viewsets.ModelViewSet):
                 message = "Please valid User."
                 return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
         except Exception as e:
-            message = "Please submit valid User."
+            message = "Something went wrong."
             print(str(e))
             return JsonResponse({'status': True, 'data': message}, status=HTTPStatus.EXPECTATION_FAILED)
 
 
     @action(detail=False, methods=['get'], url_path='active-bod-users-search')
-    def inactive_user_search(self, request):
+    def inactive_user_bod_search(self, request):
         try:
             if request.user.is_authenticated:
-                user_list = User.objects.all()
+                user_list = User.objects.all().order_by('-id')
                 search_string = request.GET.get('member_name')
                 # user_filter = User.objects.filter(
                 #     Q(first_name=search_string) | Q(last_name=search_string),
@@ -199,7 +193,7 @@ class UserList(viewsets.ModelViewSet):
                     Q(club_ac_number__contains=search_string) |
                     Q(phone_primary__contains=search_string))
 
-                )
+                ).order_by('-id')
 
                 print(user_filter.query)
                 # user_data = UserSerializer(instance=user_filter, many=True).data
