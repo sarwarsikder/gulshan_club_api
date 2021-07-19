@@ -258,6 +258,12 @@ class NoticeBoard(models.Model):
     title = models.CharField(max_length=100)
     message = models.TextField(max_length=2000)
     tag = models.CharField(max_length=50, null=True, blank=True)
+    image_medium = StdImageField(upload_to=image_storage('notice/medium'), variations={
+        'medium': (300, 200)
+    }, blank=True, null=True)
+    image_thumbnail = StdImageField(upload_to=image_storage('notice/thumbnail'), variations={
+        'thumbnail': (100, 100, True),
+    }, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True)
     deleted_at = models.DateTimeField(auto_now_add=True, null=True)

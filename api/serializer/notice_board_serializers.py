@@ -4,4 +4,6 @@ from  ..models import NoticeBoard
 class NoticeBoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = NoticeBoard
-        fields = ('title', 'message', 'tag', 'created_at', 'updated_at')
+        ordering_fields = ['id', 'created_at']
+        ordering = ['created_at']
+        fields = ('id', 'title', 'message', 'tag', 'image_medium', 'image_thumbnail', 'created_at', 'updated_at')
