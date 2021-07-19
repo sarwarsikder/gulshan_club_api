@@ -155,10 +155,10 @@ class UserList(viewsets.ModelViewSet):
                         Q(club_ac_number__contains=search_string) |
                         Q(phone_primary__contains=search_string))
 
-                    ).order_by('death_date')
+                    ).order_by('-death_date')
                 else:
                     user_filter = User.objects.filter(
-                    Q(is_active=False)).order_by('death_date')
+                    Q(is_active=False)).order_by('-death_date')
                     
 
 
