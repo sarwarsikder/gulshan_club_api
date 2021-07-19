@@ -302,7 +302,7 @@ class Event(models.Model):
 
 class ClubFacility(models.Model):
     name = models.CharField(max_length=250)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     image_medium = StdImageField(upload_to=image_storage('club_facility/medium'), variations={
         'medium': (300, 200)
     }, blank=True, null=True)
@@ -322,7 +322,7 @@ class ClubFacility(models.Model):
 class ClubFacilityDetail(models.Model):
     name = models.CharField(max_length=250)
     club_facility = models.ForeignKey(ClubFacility, on_delete=models.DO_NOTHING)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     image_medium = StdImageField(upload_to=image_storage('club_facility_detail/medium'), variations={
         'medium': (300, 200)
     }, blank=True, null=True)

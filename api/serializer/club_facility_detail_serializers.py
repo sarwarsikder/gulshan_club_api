@@ -17,10 +17,13 @@ class ClubFacilityDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClubFacilityDetail
+        ordering_fields = ['id', 'created_at']
+        ordering = ['id']
         fields = ('id',
                   'name',
                   'club_facility',
                   'description',
                    "image_medium",
-                   "image_thumbnail")
+                   "image_thumbnail",
+                   'created_at')
 

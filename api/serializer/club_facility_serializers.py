@@ -16,8 +16,13 @@ class ClubFacilitySerializer(serializers.ModelSerializer):
             return '%s%s' % (settings.MEDIA_URL, obj.image_thumbnail)
     class Meta:
         model = ClubFacility
+        ordering_fields = ['id', 'created_at']
+        ordering = ['created_at']
         fields = ('id',
                   'name',
                   'description',
-                   "image_medium","image_thumbnail")
+                   "image_medium",
+                   "image_thumbnail",
+                   "created_at"
+                   )
 
