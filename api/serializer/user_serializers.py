@@ -36,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
         "designation",
         "membership_date",
         "birthday",
+        "death_date",
         "marital_status",
         "marriage_anniversary",
         "spouse",
