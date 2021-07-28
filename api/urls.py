@@ -10,7 +10,7 @@ from api.views.user_stuff_views import UserStuffList
 from api.views.user_views import UserList, GroupList, UserByUsernameList
 from api.views.views import StoreManager
 from api.views import payment_views
-from api.views import contact_us_views
+from api.views import contact_us_views, reservation_views
 
 router = routers.DefaultRouter()
 router.register(r'opt_operation', UserByUsernameList)
@@ -50,6 +50,12 @@ urlpatterns = [
     path('contact-us/create-request/',
          contact_us_views.contact_request,
          name = 'contact-request'),
+    path('reservation/create-reservation/',
+         reservation_views.post_reservation,
+         name = 'create-reservation'),
+    path('reservation/get-reservation/',
+         reservation_views.get_observation,
+         name = 'get-observation'),
     path('groups/', GroupList.as_view()),
     path('events/(?P<year>.+)/$', EventList.as_view()),
     path('events/', EventList.as_view()),
