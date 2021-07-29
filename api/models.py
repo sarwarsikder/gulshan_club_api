@@ -385,7 +385,7 @@ class Reservation(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     persion = models.CharField(max_length=10, blank=True)
     status = models.CharField(max_length=15, default="Pending" , choices=STATUS_CHOICES)
-    reservation_datetime = models.DateTimeField(blank=True, default=None, editable=True)
+    reservation_date = models.DateTimeField(blank=True, default=None, editable=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)
 

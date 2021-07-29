@@ -34,7 +34,7 @@ def post_reservation(request):
                     reservation = Reservation()
                     reservation.facility = facility
                     reservation.created_by = request.user
-                    reservation.reservation_datetime = observation_date
+                    reservation.reservation_date = observation_date
                     reservation.save()
                     
                     return JsonResponse({'status': True, 'message': 'Your reservation has been post,We will contact you shortly.'}, status=HTTPStatus.OK)
