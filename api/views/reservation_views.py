@@ -27,13 +27,14 @@ def post_reservation(request):
                     facility_id = body_data['facility_id']
                     facility = ClubFacilityDetail.objects.get(id=facility_id)
                     
-                    print(datetime.datetime.strptime(body_data['observation_date'], "%Y-%m-%d %H:%M:%S"))
+                  
+                    observation_date = datetime.datetime.strptime(body_data['observation_date'], "%Y-%m-%d %H:%M")
                     
                     
                     reservation = Reservation()
                     reservation.facility = facility
                     reservation.created_by = request.user
-                    reservation.observation_date = datetime.datetime.strptime(body_data['observation_date'], "%Y-%m-%d %H:%M:%S")
+                    reservation.reservation_datetime = observation_date
                     reservation.save()
                     
                     return JsonResponse({'status': True, 'message': 'Your reservation has been post,We will contact you shortly.'}, status=HTTPStatus.OK)
@@ -45,10 +46,20 @@ def post_reservation(request):
             return JsonResponse({'status': True, 'message': message}, status=HTTPStatus.EXPECTATION_FAILED)
         
 @api_view(['GET'])
-def get_observation(request):
+def get_observation(request,status='all'):
         try:
             if request.user.is_authenticated:
-                payment_list = Reservation.objects.all().order_by('-id')
+                
+                if status == 'all':
+                    payment_list = Reservation.objects.filter(created_by=request.user).order_by('-id')
+                elif status == 'pending':
+                     payment_list = Reservation.objects.filter(created_by=request.user, status = "Pending").order_by('-id')
+                elif status == 'confirmed':
+                     payment_list = Reservation.objects.filter(created_by=request.user, status = "Confirmed").order_by('-id')
+                elif status == 'canceled':
+                     payment_list = Reservation.objects.filter(created_by=request.user, status = "Canceled").order_by('-id')
+                else:
+                     payment_list = Reservation.objects.filter(created_by=request.user).order_by('-id')
                
 
                 results = []

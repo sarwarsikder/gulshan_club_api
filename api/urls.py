@@ -53,7 +53,7 @@ urlpatterns = [
     path('reservation/create-reservation/',
          reservation_views.post_reservation,
          name = 'create-reservation'),
-    path('reservation/get-reservation/',
+    path('reservation/<str:status>/get-reservation/',
          reservation_views.get_observation,
          name = 'get-observation'),
     path('groups/', GroupList.as_view()),

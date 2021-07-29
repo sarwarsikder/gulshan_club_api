@@ -11,4 +11,4 @@ class ReservationSerializer(serializers.ModelSerializer):
         model = Reservation
         ordering_fields = ['id']
         ordering = ['id']
-        fields = ('id','created_by', 'facility', 'reservation_date', 'status', 'created_at','updated_at')
+        fields = ('id','created_by', 'facility', 'reservation_datetime', 'status', 'created_at','updated_at')
